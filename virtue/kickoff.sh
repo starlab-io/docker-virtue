@@ -1,3 +1,4 @@
 #!/bin/bash
-./set-authorized-keys.sh
-/usr/sbin/sshd -D -d
+/root/set-authorized-keys.sh
+xpra start :100 --start-child=gedit
+/usr/sbin/sshd -d

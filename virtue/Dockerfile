@@ -19,14 +19,8 @@ RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
 #Install Xpra
 RUN	apt-get -qy install xpra
 
-#Debug
+#Debug Tools
 RUN apt-get -qy install vim 
-
-#Install Sample App
-RUN apt-get -qy install gedit
-
-#Configure ssh to allow key based auth and grab key from env
-COPY sshd_config /etc/ssh/
 
 RUN mkdir /root/.ssh && \
 	chmod 700 /root/.ssh
@@ -35,4 +29,19 @@ RUN mkdir /root/.ssh && \
 RUN apt-get -qy install liblz4-tool python-gtkglext1
 RUN pip install --upgrade pip
 RUN pip install numpy opencv-python
+
+#configure around root .profile being wonky
+RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
+
+#Install Sample App
+RUN apt-get -qy install gedit
+
+#Configure ssh to allow key based auth and grab key from env
+COPY sshd_config /etc/ssh/
+COPY *.sh /root/
+
+#TBD Restrict SSH to only run the one xpra command
+
+#Auto start command
+CMD /root/kickoff.sh
 
