@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  crossover:
+    image: crossover
+    ports:
+      - "10000:10000"
+    user: virtue
+    volumes:
+      #- #{PWD}/crossover.log:/home/virtue/.xpra/crossover.log
+      - /var/log/crossover.log:/home/virtue/.xpra/crossover.log
+
