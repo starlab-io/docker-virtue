@@ -2,16 +2,15 @@
 # See the sshd_config(5) manpage for details
 
 # What ports, IPs and protocols we listen for
-Port 22
+Port 2022
 # Use these options to restrict which interfaces/protocols sshd will bind to
 #ListenAddress ::
 #ListenAddress 0.0.0.0
 Protocol 2
 # HostKeys for protocol version 2
-HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_dsa_key
-HostKey /etc/ssh/ssh_host_ecdsa_key
-HostKey /etc/ssh/ssh_host_ed25519_key
+HostKey ~/.ssh/ssh_host_rsa_key
+HostKey ~/.ssh/ssh_host_dsa_key
+HostKey ~/.ssh/ssh_host_ecdsa_key
 #Privilege Separation is turned on for security
 UsePrivilegeSeparation no
 

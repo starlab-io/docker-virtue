@@ -16,32 +16,42 @@ RUN     apt-get -qy install openssh-server
 RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
 	echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list
 
-#Install Xpra
-RUN	apt-get -qy install xpra
-
-#Debug Tools
-RUN apt-get -qy install vim 
-
-RUN mkdir /root/.ssh && \
-	chmod 700 /root/.ssh
-
-#COPY set-authorized-keys.sh /root/.ssh/authorized_keys
+#Install Deps for xpra
 RUN apt-get -qy install liblz4-tool python-gtkglext1
 RUN pip install --upgrade pip
 RUN pip install numpy opencv-python
 
-#configure around root .profile being wonky
-RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
+#Install Xpra
+RUN	apt-get -qy install xpra
 
 #Install Sample App
 RUN apt-get -qy install gedit
 
+#Debug Tools
+RUN apt-get -qy install vim 
+
+#Create virtue user for sshd,xpra, and target app
+RUN useradd -ms /bin/bash virtue
+USER virtue
+WORKDIR /home/virtue
+
+RUN mkdir ~/.ssh && \
+	chmod 700 ~/.ssh
+RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
+	ssh-keygen -t rsa -f ~/.ssh/ssh_host_rsa_key && \
+	ssh-keygen -t ecdsa -f ~/.ssh/ssh_host_ecdsa_key
+
+
+
+#configure around root .profile being wonky
+#RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
+
 #Configure ssh to allow key based auth and grab key from env
-COPY sshd_config /etc/ssh/
-COPY *.sh /root/
+COPY sshd_config /home/virtue/
+COPY *.sh /home/virtue/
 
 #TBD Restrict SSH to only run the one xpra command
 
 #Auto start command
-CMD /root/kickoff.sh
+CMD /home/virtue/kickoff.sh
 
