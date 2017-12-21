@@ -1,50 +1,37 @@
-FROM starlabio/ubuntu-base:1.2
+FROM centos:centos7
 MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
 
-# Ensure 64 bit only
-RUN sed -e 's:deb h:deb [arch=amd64] h:' -e 's:deb-src h:deb-src [arch=amd64] h:' -i /etc/apt/sources.list && \
-    find /etc/apt/sources.list.d/ -type f -exec sed -e 's:deb h:deb [arch=amd64] h:' -i {} \;
+# Update
+RUN yum update -y 
 
-#General Image Update
-RUN	apt-get -qy install software-properties-common && \
-	add-apt-repository universe && \
-	apt-get -qy update
+# Install Infrastructure
+RUN yum install -y openssh-server
 
-RUN     apt-get -qy install openssh-server
+# Install XPRA
+RUN rpm --import https://winswitch.org/gpg.asc && \
+    curl http://xpra.org/dists/CentOS/winswitch.repo > /etc/yum.repos.d/winswitch.repo && \
+    yum install -y xpra
 
-#Install Xpra/WinSwitch Repo
-RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
-	echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list
-
-#Install Deps for xpra
-RUN apt-get -qy install liblz4-tool python-gtkglext1
-RUN pip install --upgrade pip
-RUN pip install numpy opencv-python
-
-#Install Xpra
-RUN	apt-get -qy install xpra
+# Expose port for ssh
+EXPOSE 2022
 
 #Install Sample App
-RUN apt-get -qy install gedit
+RUN yum install -y gedit
 
 #Debug Tools
-RUN apt-get -qy install vim 
+RUN yum install -y vim 
 
-#Create virtue user for sshd,xpra, and target app
+#Create virtue user for sshd, xpra, and target app
 RUN useradd -ms /bin/bash virtue
 USER virtue
 WORKDIR /home/virtue
 
+#Configure ssh stuff
 RUN mkdir ~/.ssh && \
 	chmod 700 ~/.ssh
 RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
 	ssh-keygen -t rsa -f ~/.ssh/ssh_host_rsa_key && \
 	ssh-keygen -t ecdsa -f ~/.ssh/ssh_host_ecdsa_key
-
-
-
-#configure around root .profile being wonky
-#RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
 
 #Configure ssh to allow key based auth and grab key from env
 COPY sshd_config /home/virtue/
