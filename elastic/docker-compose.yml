@@ -1,0 +1,53 @@
+version: '3'
+services:
+
+  elasticsearch:
+    build: ./esearch/
+    volumes:
+      - ./esearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      # - ./esearch/data/:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:5.6.3
+  #   volumes:
+  #     - ./logstash/settings/logstash-config.yml:/usr/share/logstash/config/logstash.yml
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
+  #     - ./logstash/test:/host/var/log
+  #     - ./logstash/log:/var/log/logstash
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "200k"
+  #       max-file: "10"
+  #   networks:
+  #     - elk
+  #   depends_on:
+  #     - elasticsearch
+
+  kibana:
+    build: ./kibana/
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+
+networks:
+
+  elk:
+    driver: bridge

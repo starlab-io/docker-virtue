@@ -1,0 +1,57 @@
+---
+## Default Elasticsearch configuration from elasticsearch-docker.
+## from https://github.com/elastic/elasticsearch-docker/blob/master/build/elasticsearch/elasticsearch.yml
+#
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+discovery.zen.minimum_master_nodes: 1
+
+## Use single node discovery in order to disable production mode and avoid bootstrap checks
+## see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+#
+discovery.type: single-node
+
+# logger.org.elasticsearch.transport: trace
+
+
+## Disable X-Pack
+## see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
+##     https://www.elastic.co/guide/en/x-pack/current/installing-xpack.html#xpack-enabling
+#
+xpack.security.enabled: false
+xpack.monitoring.enabled: false
+xpack.ml.enabled: false
+xpack.watcher.enabled: false
+
+## Search Guard
+searchguard.ssl.transport.keystore_filepath: node-0-keystore.jks
+searchguard.ssl.transport.truststore_filepath: truststore.jks
+searchguard.ssl.transport.enforce_hostname_verification: false
+
+# Enable or disable rest layer security - https, (default: false)
+searchguard.ssl.http.enabled: true
+# JKS or PKCS12 (default: JKS)
+#searchguard.ssl.http.keystore_type: PKCS12
+# Relative path to the keystore file (this stores the server certificates), must be placed under the config/ dir
+searchguard.ssl.http.keystore_filepath: node-0-keystore.jks
+# Alias name (default: first alias which could be found)
+searchguard.ssl.http.keystore_alias: node-0
+# Keystore password (default: changeit)
+# searchguard.ssl.http.keystore_password: changeit
+# Do the clients (typically the browser or the proxy) have to authenticate themself to the http server, default is OPTIONAL
+# To enforce authentication use REQUIRE, to completely disable client certificates use NONE
+#searchguard.ssl.http.clientauth_mode: REQUIRE
+# JKS or PKCS12 (default: JKS)
+#searchguard.ssl.http.truststore_type: PKCS12
+# Relative path to the truststore file (this stores the client certificates), must be placed under the config/ dir
+searchguard.ssl.http.truststore_filepath: truststore.jks
+# Truststore password (default: changeit)
+# searchguard.ssl.http.truststore_password: changeit
+
+
+searchguard.authcz.admin_dn:
+  - "CN=kirk,OU=client,O=client,l=tEst,C=De"

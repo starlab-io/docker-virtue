@@ -1,0 +1,33 @@
+---
+## Default Kibana configuration from kibana-docker.
+## from https://github.com/elastic/kibana-docker/blob/master/build/kibana/config/kibana.yml
+#
+server.name: kibana
+server.host: "0"
+
+elasticsearch.url: https://128.89.89.91:9200
+elasticsearch.username: "kibanaserver"
+elasticsearch.password: "kibanaserver"
+
+
+elasticsearch.ssl.certificateAuthorities: 
+  - "/usr/share/kibana/config/root-ca.pem"
+  - "/usr/share/kibana/config/signing-ca.pem"
+elasticsearch.ssl.certificate: "/usr/share/kibana/config/kibana.crt.pem"
+elasticsearch.ssl.key: "/usr/share/kibana/config/kibana.key.pem"
+elasticsearch.ssl.keyPassphrase: changeit
+elasticsearch.ssl.verificationMode: none
+
+searchguard.cookie.password: "123567818187654rwrwfsfshdhdhtegdhfzftdhncn"
+    
+
+## Disable X-Pack
+## see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
+##     https://www.elastic.co/guide/en/x-pack/current/installing-xpack.html#xpack-enabling
+#
+xpack.security.enabled: false
+xpack.monitoring.enabled: false
+xpack.ml.enabled: false
+xpack.graph.enabled: false
+xpack.reporting.enabled: false
+xpack.grokdebugger.enabled: false
