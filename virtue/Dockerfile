@@ -5,7 +5,7 @@ MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
 RUN yum update -y 
 
 # Install Infrastructure
-RUN yum install -y openssh-server
+RUN yum install -y openssh-server wget curl bzip2
 
 # Install XPRA
 RUN rpm --import https://winswitch.org/gpg.asc && \
@@ -37,8 +37,19 @@ RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
 COPY sshd_config /home/virtue/
 COPY *.sh /home/virtue/
 
+#Install User Local apps
+#RUN wget https://mirror.clarkson.edu/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2 && \
+#	tar -xvjf blender-2.79-linux-glibc219-x86_64.tar.bz2
+
 #TBD Restrict SSH to only run the one xpra command
 
+#Fixup xpra environment
+RUN echo "export XDG_RUNTIME_DIR=~/.xpra" >> /home/virtue/.bashrc
 #Auto start command
 CMD /home/virtue/kickoff.sh
+#CMD /bin/bash
+
+#USER root
+#WORKDIR /root
+#CMD /bin/bash
 

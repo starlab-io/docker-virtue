@@ -1,4 +1,5 @@
 #!/bin/bash
-/home/virtue/set-authorized-keys.sh
+~/set-authorized-keys.sh
+mkdir ~/.xpra
 xpra -d all,-window start :100 --start-child=gedit
-/usr/sbin/sshd -d -f /home/virtue/sshd_config
+/usr/sbin/sshd -D -f ~/sshd_config
