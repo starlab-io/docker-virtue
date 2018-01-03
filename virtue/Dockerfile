@@ -12,11 +12,9 @@ RUN rpm --import https://winswitch.org/gpg.asc && \
     curl http://xpra.org/dists/CentOS/winswitch.repo > /etc/yum.repos.d/winswitch.repo && \
     yum install -y xpra
 
-# Expose port for ssh
-EXPOSE 2022
-
-#Install Sample App
+#Install Sample Apps
 RUN yum install -y gedit
+RUN yum install -y firefox
 
 #Debug Tools
 RUN yum install -y vim 
@@ -48,6 +46,11 @@ RUN echo "export XDG_RUNTIME_DIR=~/.xpra" >> /home/virtue/.bashrc
 #Auto start command
 CMD /home/virtue/kickoff.sh
 #CMD /bin/bash
+
+# Expose ports for ssh/apps
+EXPOSE 2022
+EXPOSE 2023
+EXPOSE 2024
 
 #USER root
 #WORKDIR /root
