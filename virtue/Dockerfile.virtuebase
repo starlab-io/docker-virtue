@@ -14,28 +14,26 @@ RUN	apt-get -qy update && \
 	add-apt-repository universe && \
 	apt-get -qy update
 
-RUN     apt-get -qy install openssh-server
+RUN     apt-get -qy install openssh-server curl 
 
 #Install Xpra/WinSwitch Repo
 RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
-	echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list
+	echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list && \
+  apt-get -qy update
 
 #Install Deps for xpra
-RUN apt-get -qy install liblz4-tool python-gtkglext1
+RUN apt-get -qy install liblz4-tool python-gtkglext1 dbus dbus-x11 python-pip
 RUN pip install --upgrade pip
 RUN pip install numpy opencv-python websockify netifaces python-uinput
 
 #Install Xpra
 RUN	apt-get -qy install xpra
 
-#Install Sample App
-RUN apt-get -qy install gedit
-
 #Debug Tools
 RUN apt-get -qy install vim
 
 #DebugExtras
-RUN apt-get -qy install xvfb 
+RUN apt-get -qy install xvfb
 
 #Create virtue user for sshd,xpra, and target app
 RUN useradd -ms /bin/bash virtue
@@ -48,8 +46,6 @@ RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
 	ssh-keygen -t rsa -f ~/.ssh/ssh_host_rsa_key && \
 	ssh-keygen -t ecdsa -f ~/.ssh/ssh_host_ecdsa_key
 
-
-
 #configure around root .profile being wonky
 #RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
 
@@ -61,4 +57,3 @@ COPY *.sh /home/virtue/
 
 #Auto start command
 CMD /home/virtue/kickoff.sh
-
