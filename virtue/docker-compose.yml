@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  gedit:
+    image: "virtue:virtue-gedit"
+    ports:
+      - "6767:2022"
+    environment:
+      - SSHPPUBKEY
+  firefox:
+    image: "virtue:virtue-firefox"
+    ports:
+      - "6868:2022"
+    shm_size: 1g
+    environment:
+      - SSHPPUBKEY

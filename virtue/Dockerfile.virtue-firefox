@@ -1,0 +1,11 @@
+FROM virtue:virtuebase
+MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+RUN apt-get -qy install firefox
+RUN sed -i "s/\$APP_TO_RUN/firefox/" kickoff.sh
+
+WORKDIR /home/virtue
+USER virtue

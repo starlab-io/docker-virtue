@@ -1,0 +1,11 @@
+FROM virtue:virtuebase
+MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+RUN apt-get -qy install gedit
+RUN sed -i "s/\$APP_TO_RUN/gedit/" kickoff.sh
+
+WORKDIR /home/virtue
+USER virtue
