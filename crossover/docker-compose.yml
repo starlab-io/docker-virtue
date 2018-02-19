@@ -1,12 +1,17 @@
 version: '2'
 
+build:
+    context: ./minimal
+    dockerfile: Dockerfile.minimal
+    image: crossover:minimal
+
 services:
   crossover:
-    image: crossover
+    image: crossover:minimal
     ports:
       - "10000:10000"
     user: virtue
     volumes:
       #- #{PWD}/crossover.log:/home/virtue/.xpra/crossover.log
-      - /var/log/crossover.log:/home/virtue/.xpra/crossover.log
+      #- /var/log/crossover.log:/home/virtue/.xpra/crossover.log
 
