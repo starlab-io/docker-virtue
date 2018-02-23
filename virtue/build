@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker build -t virtue:virtuebase -f Dockerfile.virtuebase .
+docker build -t virtue:virtue-gedit -f Dockerfile.virtue-gedit .
+docker build -t virtue:virtue-firefox -f Dockerfile.virtue-firefox .
