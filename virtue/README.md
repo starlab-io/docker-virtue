@@ -35,9 +35,9 @@ For both of those, you can set up the tunnel by doing the following:
 
 ```
 # Get to GEdit
-ssh -p 6767 -L 2023:localhost:2023 virtue@<hostname>
+ssh -N -p 6767 -L 2023:localhost:2023 virtue@<hostname>
 # Get to Firefox
-ssh -p 6768 -L 2023:localhost:2023 virtue@<hostname>
+ssh -N -p 6768 -L 2024:localhost:2023 virtue@<hostname>
 ```
 
 This will stop the containers:

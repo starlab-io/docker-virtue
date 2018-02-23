@@ -45,7 +45,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 #Create virtue user for sshd,xpra, and target app
-RUN useradd -ms /bin/bash virtue
+RUN useradd -ms /usr/sbin/nologin virtue
 USER virtue
 WORKDIR /home/virtue
 
