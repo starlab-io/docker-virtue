@@ -1,0 +1,37 @@
+#!/bin/bash
+
+start_container() {
+	NAME=$1
+	PORT=$2
+	ADDITIONAL=$3
+
+	echo "Recreating service $NAME"
+	docker create --rm \
+		-p ${PORT}:2022 \
+		-e SSHPUBKEY \
+		--security-opt="apparmor=docker-${NAME}" \
+		--security-opt="seccomp=seccomp.${NAME}.json" \
+		${ADDITIONAL} \
+		--name virtue_${NAME} \
+		virtue:virtue-${NAME}
+
+	echo "Starting service $NAME"
+	docker start virtue_${NAME}
+}
+
+stop_container() {
+	NAME=$1
+	echo "Stopping service $NAME"
+	docker stop virtue_${NAME}
+}
+
+case "$1" in
+	start)
+		start_container gedit 6767
+		start_container firefox 6768 "--shm-size=1g"
+		;;
+	stop)
+		stop_container gedit
+		stop_container firefox
+		;;
+esac
