@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 
 services:
   gedit:
@@ -6,11 +6,15 @@ services:
     ports:
       - "6767:2022"
     environment:
-      - SSHPPUBKEY
+      - SSHPUBKEY
+    security_opt:
+        - apparmor:docker-gedit
   firefox:
     image: "virtue:virtue-firefox"
     ports:
       - "6868:2022"
     shm_size: 1g
     environment:
-      - SSHPPUBKEY
+      - SSHPUBKEY
+    security_opt:
+        - apparmor:docker-firefox

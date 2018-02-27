@@ -1,0 +1,60 @@
+#!/bin/bash
+
+start_container() {
+	NAME=$1
+	PORT=$2
+	ADDITIONAL=$3
+
+	echo "Ensuring that the AppArmor profile is enabled for ${NAME}"
+	sudo apparmor_parser -r -W apparmor.${NAME}.profile
+
+	echo "Recreating service $NAME"
+	docker create --rm \
+		-p ${PORT}:2022 \
+		-e SSHPUBKEY \
+		--security-opt="apparmor=docker-${NAME}" \
+		--security-opt="seccomp=seccomp.${NAME}.json" \
+		${ADDITIONAL} \
+		--name virtue_${NAME} \
+		virtue:virtue-${NAME}
+
+	echo "Starting service $NAME"
+	docker start virtue_${NAME}
+}
+
+stop_container() {
+	NAME=$1
+	echo "Stopping service $NAME"
+	docker stop virtue_${NAME}
+}
+
+CONFIG=${2:-Virtue.config}
+
+case "$1" in
+	build)
+		# Ensure that the virtuebase is up-to-date
+		docker build -t virtue:virtuebase -f Dockerfile.virtuebase .
+
+		# Read all of the Virtues out of the config file and look for Dockerfiles named
+		# after the application name
+		IFS=\|
+		cat ${CONFIG} | while read container rest ; do
+			docker build -t virtue:virtue-${container} -f Dockerfile.virtue-${container} .
+		done
+		;;
+	start)
+		IFS=\|
+		cat ${CONFIG} | while read container port rest ; do
+			start_container ${container} ${port} ${rest}
+		done
+		;;
+	stop)
+		IFS=\|
+		cat ${CONFIG} | while read container rest ; do
+			stop_container ${container}
+		done
+		;;
+	*)
+		echo "Usage: virtue [build|start|stop] (Virtue.config)"
+		;;
+esac
