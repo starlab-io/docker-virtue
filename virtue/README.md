@@ -30,7 +30,7 @@ The Virtue.config file format is a series of lines like the following:
 gedit|6767|
 firefox|6768|--shm-size=1g
 ```
-or, more generally, each line is a ':' delimited string with `<name>|<port>|<additional docker args>`.
+or, more generally, each line is a '|' delimited string with `<name>|<port>|<additional docker args>`.
 The `<name>` field is special. It is used to look up the name of the Dockerfile for the building step and is used to look up
 the name of the container when starting or stopping virtues. For instance, the Dockerfiles for all of the virtue containers will
 be named `Dockerfile.virtue-<name>`. Additionally, the seccomp profile must be present and named `seccomp.<name>.json` and an
