@@ -37,10 +37,14 @@ case "$1" in
 		# Ensure that the virtuebase is up-to-date
 		docker build -t virtue:virtuebase -f Dockerfile.virtuebase .
 
+		# Ensure that the crossover base is up to date
+		docker build -t virtue:virtuecxbase -f Dockerfile.virtue-crossover .
+
 		# Read all of the Virtues out of the config file and look for Dockerfiles named
 		# after the application name
 		IFS=\|
 		cat ${CONFIG} | while read container rest ; do
+			echo "------------ Building ${container} from Dockerfile.virtue-${container} ------------"
 			docker build -t virtue:virtue-${container} -f Dockerfile.virtue-${container} .
 		done
 		;;

@@ -1,4 +1,4 @@
-FROM virtuebase
+FROM virtue:virtuebase
 MAINTAINER Alex Jordan <alex.jordan@raytheon.com>
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER root
