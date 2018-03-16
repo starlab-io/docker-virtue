@@ -43,7 +43,8 @@ save_container() {
 	cp app-containers/seccomp/seccomp.${NAME}.json ${NAME}/
 	cat <<- EOF > ${NAME}/run.sh
 	#!/bin/bash
-	docker create --rm -p ${PORT}:2022 -e SSHPUBKEY --security-opt="apparmor=docker-${NAME}" --security-opt="seccomp=app-containers/seccomp/seccomp.${NAME}.json" ${ADDITIONAL} --name virtue_${NAME} virtue:virtue-${NAME}
+	sudo apparmor_parser -r -W apparmor.${NAME}.profile
+	docker create --rm -p ${PORT}:2022 -e SSHPUBKEY --security-opt="apparmor=docker-${NAME}" --security-opt="seccomp=seccomp.${NAME}.json" ${ADDITIONAL} --name virtue_${NAME} virtue:virtue-${NAME}
 
 	echo "Starting service $NAME"
 	docker start virtue_${NAME}	
