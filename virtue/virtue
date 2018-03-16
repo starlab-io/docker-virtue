@@ -5,6 +5,8 @@ start_container() {
 	PORT=$2
 	ADDITIONAL=$3
 
+	[ -z "$SSHPUBKEY" ] && { echo "Error: SSHPUBKEY environment variable must be set"; exit 1; }
+
 	echo "Ensuring that the AppArmor profile is enabled for ${NAME}"
 	sudo apparmor_parser -r -W apparmor.${NAME}.profile
 
