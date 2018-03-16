@@ -8,14 +8,14 @@ start_container() {
 	[ -z "$SSHPUBKEY" ] && { echo "Error: SSHPUBKEY environment variable must be set"; exit 1; }
 
 	echo "Ensuring that the AppArmor profile is enabled for ${NAME}"
-	sudo apparmor_parser -r -W apparmor.${NAME}.profile
+	sudo apparmor_parser -r -W app-containers/apparmor/apparmor.${NAME}.profile
 
 	echo "Recreating service $NAME"
 	docker create --rm \
 		-p ${PORT}:2022 \
 		-e SSHPUBKEY \
 		--security-opt="apparmor=docker-${NAME}" \
-		--security-opt="seccomp=seccomp.${NAME}.json" \
+		--security-opt="seccomp=app-containers/seccomp/seccomp.${NAME}.json" \
 		${ADDITIONAL} \
 		--name virtue_${NAME} \
 		virtue:virtue-${NAME}
@@ -45,7 +45,7 @@ case "$1" in
 		IFS=\|
 		cat ${CONFIG} | while read container rest ; do
 			echo "------------ Building ${container} from Dockerfile.virtue-${container} ------------"
-			docker build -t virtue:virtue-${container} -f Dockerfile.virtue-${container} .
+			docker build -t virtue:virtue-${container} -f app-containers/Dockerfile.virtue-${container} .
 		done
 		;;
 	start)
