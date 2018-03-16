@@ -76,3 +76,11 @@ This will stop the containers:
 ./virtue stop (Virtue.config)
 ```
 where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
+
+
+
+Building New Virtues
+------------------------
+
+To create a new Virtue, you need to add a Dockerfile to the app-containers directory, and then create seccomp and 
+apparmor profiles for the new application. 
