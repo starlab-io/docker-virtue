@@ -78,9 +78,10 @@ This will stop the containers:
 where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
 
 
-
 Building New Virtues
 ------------------------
 
 To create a new Virtue, you need to add a Dockerfile to the app-containers directory, and then create seccomp and 
 apparmor profiles for the new application. 
+
+To run the Office Virtue, you need to do a `docker load virtue-office-installed.tar` before running `virtue start`. The installation process for Office is not going to be automated for the T&E release - the process is hard to automate, and the licensing process is complex.
