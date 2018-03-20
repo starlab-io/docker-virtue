@@ -30,7 +30,7 @@ The Virtue.config file format is a series of lines like the following:
 gedit|6767|
 firefox|6768|--shm-size=1g
 ```
-or, more generally, each line is a '|' delimited string with `<name>|<port>|<additional docker args>`.
+or, more generally, each line is a '|' delimited string with `<name>|<port>|<additional docker args>`. **Note that the file must end with a blank line, or the final line will be ignored!**
 The `<name>` field is special. It is used to look up the name of the Dockerfile for the building step and is used to look up
 the name of the container when starting or stopping virtues. For instance, the Dockerfiles for all of the virtue containers will
 be named `Dockerfile.virtue-<name>`. Additionally, the seccomp profile must be present and named `seccomp.<name>.json` and an
@@ -58,9 +58,9 @@ where you the Virtue.config file is optional (it will read from a file called Vi
 Start the Containers
 --------------------
 
-Before starting the remote containers, the SSHPUBKEY environment variable needs to be set. A future enhancement could be to take this
-in as a file or read it from some other location and setting it in the environment before actually starting the container, but it is
-required that you have it set first.
+Before starting the remote containers, the SSHPUBKEY environment variable needs to be set. A future enhancement could be to take this in as a file or read it from some other location and setting it in the environment before actually starting the container, but it is required that you have it set first.
+
+Note that to run the Office Virtue or the PuTTY Virtue, you need to do a `docker load <virtue-office-installed.tar` or `docker load < virtue-putty-installed.tar` before running `virtue start`. We hope to remove this requirement in the future, but for now, the installation process is too difficult to automate.
 
 Start all of the containers by running:
 ```
@@ -78,10 +78,27 @@ This will stop the containers:
 where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
 
 
-Building New Virtues
+Building New Crossover-based Virtues
 ------------------------
 
-To create a new Virtue, you need to add a Dockerfile to the app-containers directory, and then create seccomp and 
-apparmor profiles for the new application. 
+To create a new Virtue, you need to add a Dockerfile to the app-containers directory, and then create seccomp and apparmor profiles for the new application.
 
-To run the Office Virtue, you need to do a `docker load virtue-office-installed.tar` before running `virtue start`. The installation process for Office is not going to be automated for the T&E release - the process is hard to automate, and the licensing process is complex.
+The biggest challenge for Crossover-based Virtues is that it's very difficult to install applications into Crossover in an automated fashion. We're working on a way to do it without requiring GUI interaction, but for now, them's the breaks.
+
+To create a new Virtue, run the following commands:
+
+- `export SSHPUBKEY=$(cat virtue-test-key.pub)` # to load the test key as your pubkey
+- `./virtue start Virtue-cxsetup.config` # to launch a Crossover cxsetup bottle running on port 7000
+- `ssh-add virtue-test-key` # to load up the sshkey
+- `ssh -N -p 7000 -L 7001:localhost:2023 virtue@localhost` # to set up the SSH tunnel. If successful, this will have no terminal output.
+- In a new terminal window: `xpra attach tcp:localhost:7001` to open the Crossover Setup window
+- Install the software into a new bottle using the Crossover interface
+- On the final installation screen, make sure to select "Advanced Installation Options" and copy the list of dependencies to be installed
+- Export the PuTTY Bottle as a Bottle Archive
+	- In the cxsetup window, click the picture of the bottles in the top left to list the app bottles Crossover knows about
+	- Right click on the app bottle and select "Export Bottle to Archive"
+	- Pick a file location you can remember (I suggest /home/virtue) and hit OK
+	- This will take a few minutes
+- Build a new Dockerfile that installs the prereqs (listed under "Advanced" when you install the app in Crossover), copies in the cxarchive file, and then decompresses it. See `Dockerfile.virtue-putty` for an example.
+- Add your app to `Virtue.config`
+- Run `./virtue build Virtue.config`
