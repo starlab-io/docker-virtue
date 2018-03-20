@@ -10,13 +10,20 @@ start_container() {
 	echo "Ensuring that the AppArmor profile is enabled for ${NAME}"
 	sudo apparmor_parser -r -W app-containers/apparmor/apparmor.${NAME}.profile
 
+	if [[ "$ADDITIONAL" -eq "NOSEC" ]]; then
+		ADDITIONAL=''
+		SECOPTS=''
+		echo "WARNING: Running ${NAME} with no apparmor or seccomp policies in place!"
+	else
+		SECOPTS='--security-opt="apparmor=docker-${NAME}" --security-opt="seccomp=app-containers/seccomp/seccomp.${NAME}.json"'
+	fi
+
 	echo "Recreating service $NAME"
 	docker create --rm \
 		-p ${PORT}:2022 \
 		-e SSHPUBKEY \
-		--security-opt="apparmor=docker-${NAME}" \
-		--security-opt="seccomp=app-containers/seccomp/seccomp.${NAME}.json" \
 		${ADDITIONAL} \
+		${SECOPTS} \
 		--name virtue_${NAME} \
 		virtue:virtue-${NAME}
 
