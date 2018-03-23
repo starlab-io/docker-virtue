@@ -16,16 +16,14 @@ start_container() {
 		echo "WARNING: Running ${NAME} with no apparmor or seccomp policies in place!"
 	else
 		SECOPTS="--security-opt \"apparmor=docker-${NAME}\" --security-opt \"seccomp=app-containers/seccomp/seccomp.${NAME}.json\""
+		echo "SECOPTS is $SECOPTS"
 	fi
 
 	echo "Recreating service $NAME"
-	docker create --rm \
-		-p ${PORT}:2022 \
-		-e SSHPUBKEY \
-		${ADDITIONAL} \
-		${SECOPTS} \
-		--name virtue_${NAME} \
-		virtue:virtue-${NAME}
+	echo Command: docker create -p ${PORT}:2022 -e SSHPUBKEY ${ADDITIONAL} ${SECOPTS} --name virtue_${NAME} virtue:virtue-${NAME} 
+
+	# I give up - I have no idea why this won't work without the bash -c . Without it, you get errors by the equal signs
+	bash -c "docker create -p ${PORT}:2022 -e SSHPUBKEY ${ADDITIONAL} ${SECOPTS} --name virtue_${NAME} virtue:virtue-${NAME}"
 
 	echo "Starting service $NAME"
 	docker start virtue_${NAME}
