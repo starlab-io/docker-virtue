@@ -15,7 +15,7 @@ start_container() {
 		SECOPTS=''
 		echo "WARNING: Running ${NAME} with no apparmor or seccomp policies in place!"
 	else
-		SECOPTS='--security-opt="apparmor=docker-${NAME}" --security-opt="seccomp=app-containers/seccomp/seccomp.${NAME}.json"'
+		SECOPTS="--security-opt \"apparmor=docker-${NAME}\" --security-opt \"seccomp=app-containers/seccomp/seccomp.${NAME}.json\""
 	fi
 
 	echo "Recreating service $NAME"
