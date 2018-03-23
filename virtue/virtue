@@ -10,7 +10,7 @@ start_container() {
 	echo "Ensuring that the AppArmor profile is enabled for ${NAME}"
 	sudo apparmor_parser -r -W app-containers/apparmor/apparmor.${NAME}.profile
 
-	if [[ "$ADDITIONAL" -eq "NOSEC" ]]; then
+	if [ "$ADDITIONAL" == "NOSEC" ]; then
 		ADDITIONAL=''
 		SECOPTS=''
 		echo "WARNING: Running ${NAME} with no apparmor or seccomp policies in place!"
