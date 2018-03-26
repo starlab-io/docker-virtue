@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     images = {}
     for tag_name in toBuild:
-        images[tag_name] = build_image_if_not_exists(conf, docker_client, tag_name)
+        images[tag_name] = build_image(conf, docker_client, tag_name)
 
     for img in images:
         print(images[img])
