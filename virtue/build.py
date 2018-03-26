@@ -59,7 +59,7 @@ def build_image(conf, docker_client, tag_name):
     print("Building '%s'..." % (tag_name), end='', flush=True)
     base = conf.get_base_image(tag_name)
     if base is not None:
-        build_image_if_not_exists(conf, docker_client, base)
+        build_image(conf, docker_client, base)
     path = conf.get_build_path(tag_name)
     dockerfile = conf.get_Dockerfile(tag_name)
     img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
