@@ -51,19 +51,19 @@ class ContainerConfig():
         except KeyError:
             return self._DEFAULT_BUILD_PATH
 
-def build_image_if_not_exists(conf, docker_client, tag_name):
+def build_image(conf, docker_client, tag_name):
     docker_image_name = conf.get_image_from_tag(tag_name)
-    try:
-        img = docker_client.images.get(docker_image_name)
-    except docker.errors.ImageNotFound:
-        print("'%s' Image not found. Building it..." % (tag_name), end='', flush=True)
-        base = conf.get_base_image(tag_name)
-        if base is not None:
-            build_image_if_not_exists(conf, docker_client, base)
-        path = conf.get_build_path(tag_name)
-        dockerfile = conf.get_Dockerfile(tag_name)
-        img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
-        print("[OK]")
+    #try:
+    #    img = docker_client.images.get(docker_image_name)
+    #except docker.errors.ImageNotFound:
+    print("Building '%s'..." % (tag_name), end='', flush=True)
+    base = conf.get_base_image(tag_name)
+    if base is not None:
+        build_image_if_not_exists(conf, docker_client, base)
+    path = conf.get_build_path(tag_name)
+    dockerfile = conf.get_Dockerfile(tag_name)
+    img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
+    print("[OK]")
     return img
 
 
