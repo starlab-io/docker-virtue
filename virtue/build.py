@@ -43,7 +43,7 @@ class ContainerConfig():
         try:
             return os.path.basename(self.data[self._images][image][self._Dockerfile])
         except KeyError:
-            return 'Dockerfile.virtue-%s' % (image)
+            return 'Dockerfile.%s' % (image)
     
     def get_build_path(self, image):
         try:
@@ -56,12 +56,12 @@ def build_image_if_not_exists(conf, docker_client, tag_name):
     try:
         img = docker_client.images.get(docker_image_name)
     except docker.errors.ImageNotFound:
-        print("'%s' Image not found. Building it..." % (app_name), end='', flush=True)
-        base = conf.get_base_image(app_name)
+        print("'%s' Image not found. Building it..." % (tag_name), end='', flush=True)
+        base = conf.get_base_image(tag_name)
         if base is not None:
             build_image_if_not_exists(conf, docker_client, base)
-        path = conf.get_build_path(image_name)
-        dockerfile = conf.get_Dockerfile(image_name)
+        path = conf.get_build_path(tag_name)
+        dockerfile = conf.get_Dockerfile(tag_name)
         img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
         print("[OK]")
     return img
