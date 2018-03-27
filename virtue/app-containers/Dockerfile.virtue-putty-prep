@@ -1,6 +1,6 @@
 # Crossover-docker for PuTTY
 
-FROM virtue:virtuecxbase
+FROM virtue:virtue-crossover
 MAINTAINER Alex Jordan <alex.jordan@raytheon.com>
 
 USER root

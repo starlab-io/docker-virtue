@@ -1,7 +1,0 @@
-FROM virtue:virtue-office-installed
-MAINTAINER Stanislav Ponomarev
-
-ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup
-
-WORKDIR /home/virtue
-USER virtue

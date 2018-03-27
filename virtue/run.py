@@ -5,8 +5,15 @@ from ContainerConfig import ContainerConfig
 
 
 def start_container(conf, docker_client, container):
+    ''' Operates only on containers defined in config yaml file.
+        Tries to start an existing container. If not found, creates a new container
+        from the image that should already exist on this machine. 
+        Figures out proper container run config based on the config yaml file.'''
+    if container not in conf.get_container_names():
+        print("ERROR! %s is not described in %s. Please add its entry before starting it" % (container, conf._DEFAULT_CONFIG_FILE))
+        return
     container_obj = None
-    container_name = 'virtue_%s' % (container)
+    container_name = container
     try:
         container_obj = docker_client.containers.get(container_name)
         print("Starting existing container")
@@ -17,8 +24,8 @@ def start_container(conf, docker_client, container):
         seccomp_file = conf.get_seccomp_file(container)
         ssh_public_key = ""
 
-        with open('/home/virtue/.ssh/authorized_keys', 'r') as f:
-            ssh_public_key = f.read()
+        with open(conf.get_ssh_authorized_keys(), 'r') as f:
+           ssh_public_key = f.read()
         
         security_opt = []
         if apparmor_file and seccomp_file:
@@ -27,7 +34,8 @@ def start_container(conf, docker_client, container):
             security_opt.append('apparmor=docker-%s' % (container))
             with open(seccomp_file, 'r') as f:
                 security_opt.append('seccomp=%s' % (f.read()))
-        ports = {conf.get_listen_port(container): 2022}
+        # ports format: { inside_container: outside_container}
+        ports = {conf.get_sshd_port(): conf.get_ssh_port(container)}
         environment = {'SSHPUBKEY': ssh_public_key}
 
         docker_args = { 'ports': {conf.get_listen_port(container): 2022},
@@ -51,13 +59,24 @@ def start_container(conf, docker_client, container):
 
 
 def stop_container(conf, docker_client, container):
-    container_obj = docker_client.containers.get('virtue_%s' % (container))
+    ''' Operates only on containers defined in config yaml.
+        Stops a container '''
+    if container not in conf.get_container_names():
+        print("ERROR! %s is not described in %s." % (container, conf._DEFAULT_CONFIG_FILE))
+        return
+    container_obj = docker_client.containers.get(container)
     container_obj.stop()
 
 def save_container(conf, docker_client, container, output):
-    container_name = 'virtue_%s' % (container)
-    if not output.startswith('virtue'):
-        output = 'virtue-%s' % (output)
+    ''' Operates only on containers defined in config yaml. Both containers should be already defined.
+        calls docker commit container and saves it as output image'''
+    if container not in conf.get_container_names():
+        print("ERROR! Container %s is not described in %s. Can't save a non-virtue container" % (container, conf._DEFAULT_CONFIG_FILE))
+        return
+    container_name = container
+    if output not in conf.get_tag_names():
+        print("ERROR! image tag %s is not described in %s. Please add its entry before saving." % (output, conf._DEFAULT_CONFIG_FILE))
+        return
     container_obj = None
     try:
         container_obj = docker_client.containers.get(container_name)
@@ -66,19 +85,24 @@ def save_container(conf, docker_client, container, output):
         return
 
     repo = conf.get_repository()
+    if container_obj.status == 'running':
+        print("Container %s is still running. Stopping it..." % (container_name), end='', flush=True)
+        container_obj.stop()
+        print("[OK]")
+        
     container_obj.commit(repository=repo, tag=output)
     print("New image '%s' is saved" % (output))
     
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Control Virtue Containers')
+    conf = ContainerConfig()
+    parser = argparse.ArgumentParser(description='Manage Virtue Containers')
     parser.add_argument('action', choices=['start', 'stop', 'save'], help='start|stop|save a container')
-    parser.add_argument('container', help='docker container name')
+    parser.add_argument('container', help='Docker container name as specified in %s.' % (conf._DEFAULT_CONFIG_FILE))
     parser.add_argument('output', metavar='save_destination', nargs='?', default=None, help='Destination container for save command')
 
     args = parser.parse_args()
-    conf = ContainerConfig()
     docker_client = docker.from_env()
 
     if args.action =='start':

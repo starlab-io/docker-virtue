@@ -11,6 +11,6 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 ENV APP_TO_RUN gedit
-
+EXPOSE 6767
 WORKDIR /home/virtue
 USER virtue

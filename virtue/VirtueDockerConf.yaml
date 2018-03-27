@@ -1,28 +1,45 @@
+sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configures sshd properly! Goes as docker start -p argument
+
+ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
+repository: virtue # what docker repository to use
+
 # Sample Container Entry:
 # containers:
 #   samplecontainer:
 #       image_tag: virtue-sampleimage # image tag of this container, image name is virtue:virtue-simplecontainer
-#       listen_port: 8080 # used with docker expose
+#       ssh_port: 6767 # default: random. Used with docker run, docker listen port
 #       args: {shm_value: 1g, read_only: False, ...} # a dictionary of python variables as keys and their values to use for python create
 #       apparmor: path-to-apparmor-profile # default: app-containers/apparmor/apparmor.samplecontainer.profile
-#       seccomp: path-to-seccomp-profile # default: app-containers/seccomp/seccomp.samplecontainer.json
+#                   Or a value None, if this container should not be run with apparmor
+#       seccomp: path-to-seccomp-config # default: app-containers/seccomp/seccomp.samplecontainer.json
+#                   Or a value None, if this container should not be run with seccomp
 
 containers:
-  gedit:
-    image_tag: virtue-gedit
-    listen_port: 6767
-  firefox:
-    image_tag: virtue-firefox
-    listen_port: 6768
-    args:
-      shm_size: 1g
-  crossover:
-    image_tag: virtue-crossover
-    listen_port: 6769
-    base_image: virtuebase
-  office:
-    image_tag: virtue-office
-    listen_port: 6770
+    gedit:
+        image_tag: virtue-gedit
+        ssh_port: 6767
+    firefox:
+        image_tag: virtue-firefox
+        ssh_port: 6768
+        args:
+            shm_size: 1g
+    office-prep:
+        image_tag: virtue-office-prep
+        ssh_port: 6769
+        apparmor: None # This is an install container. Should be used only to install a given application
+        seccomp: None
+    putty-prep:
+        image_tag: virtue-putty-prep
+        ssh_port: 6770
+        apparmor: None # This is an install container. Should be used only to install a given application
+        seccomp: None
+    office:
+        image_tag: virtue-office
+        ssh_port: 6769
+    putty:
+        image_tag: virtue-putty
+        ssh_port: 6770
+
 
 # Sample Image Entry:
 # images:
@@ -33,11 +50,13 @@ containers:
 image_tags:
     virtue-base:
         Dockerfile: virtue-base/Dockerfile.virtuebase
+    virtue-crossover:
+        base_image_tag: virtue-base
     virtue-gedit:
         base_image_tag: virtue-base
     virtue-firefox:
         base_image_tag: virtue-base
-    virtue-crossover:
-        base_image_tag: virtue-base
-    virtue-office:
+    virtue-office-prep:
+        base_image_tag: virtue-crossover
+    virtue-putty-prep:
         base_image_tag: virtue-crossover

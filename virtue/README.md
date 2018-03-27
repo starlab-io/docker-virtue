@@ -11,10 +11,9 @@ to the `xpra` port in the container.
 As an example, with the default provided containers, you can get at gedit and firefox from your machine like follows:
 
 ```
-# Get to gedit
+# Where <hostname> is hostname of a machine with docker installed and running one of the containers.
+# If <hostname> is localhost make sure to change -L 6767 to something else otherwise it'll conflict with -p 6767
 ssh -N -p 6767 -L 6767:localhost:2023 virtue@<hostname>
-# Get to firefox
-ssh -N -p 6768 -L 6768:localhost:2023 virtue@<hostname>
 ```
 The port that we are connecting to is 6767 (gedit) or 6768 (firefox) on `<hostname>`. The `-N` parameter says to not issue a remote command, which
 is good since we have disabled all logins anyway and means that this session is only good for configuring a tunnel. The `-L` parameter
@@ -22,61 +21,95 @@ sets up a tunnel from the local port 6767 (gedit) or 6768 (firefox) to the port 
 the `xpra` port on port 2023 inside of the container for all containers). I chose to reuse the port number for my local client to be the
 same as the port that I am connecting to on the remote host.
 
-Virtue.config
+VirtueDockerConf.yaml
 -------------
 
-The Virtue.config file format is a series of lines like the following:
+The Virtue.config file format is YAML (http://yaml.org/). The file already has some containers defined and comments for sample containers:
 ```
-gedit|6767|
-firefox|6768|--shm-size=1g
+containers:
+	gedit:
+		image_tag: virtue-gedit
+		ssh_port: 6767
+	firefox:
+		image_tag: virtue-firefox
+		ssh_port: 6767
+
+image_tags:
+	virtue-base:
+		Dockerfile: virtue-base/Dockerfile.virtuebase
+	virtue-gedit:
+		base_image_tag: virtue-base
+	virtue-firefox:
+		base_image_tag: virtue-base
+
 ```
-or, more generally, each line is a '|' delimited string with `<name>|<port>|<additional docker args>`. **Note that the file must end with a blank line, or the final line will be ignored!**
-The `<name>` field is special. It is used to look up the name of the Dockerfile for the building step and is used to look up
-the name of the container when starting or stopping virtues. For instance, the Dockerfiles for all of the virtue containers will
-be named `Dockerfile.virtue-<name>`. Additionally, the seccomp profile must be present and named `seccomp.<name>.json` and an
-AppArmor profile must be present and named `apparmor.<name>.profile`, with a profile inside of it named `docker-<name>`.
 
-The `<port>` field must be present in the file since that is the port that the ssh daemon for the container is exposed on. These
-ports must be unique to this particular VM (they cannot overlap).
+Possible container fields:
+```
+containers:
+	samplecontainer:
+	    image_tag: virtue-sampleimage # image tag of this container, image name is virtue:virtue-simplecontainer
+        ssh_port: 6767 # default: random. Used with docker run, docker listen port
+        args: {shm_value: 1g, read_only: False, ...} # a dictionary of python variables as keys and their values to use for python create
+        apparmor: path-to-apparmor-profile # default: app-containers/apparmor/apparmor.samplecontainer.profile
+		seccomp: path-to-seccomp-config # default: app-containers/seccomp/seccomp.samplecontainer.json
+```
 
-The `<additional docker args>` are additional command line parameters that you want to pass to the docker container. For instance,
-the firefox docker container must have an additional argument to expand the size of the shared memory available inside of the container.
+Possible image tag fields:
+```
+images:
+	virtue-sampleimage:
+	    Dockerfile: path-to-dockerfile # relative to build.py, default app-containers/Dockerfile.virtue-sampleimage
+	    base_image_tag: virtue-base # builds 'virtue-base' image before trying to build this image
 
-Why a `Virtue.config` file in this format instead of simply using the `docker-compose.yml` file to get similar functionality? Basically,
-Docker Compose doesn't have support for passing in the seccomp profile at the moment &mdash; it is an outstanding bug. Hence, this simple
-script and config file to do something similar.
+```
 
 Build
 -----
 
 You can build all of the containers currently defined by running:
 ```
-./virtue build (Virtue.config)
+./build.py
 ```
-where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
+
+Or you can build individual images by passing it as an argument
+```
+./build.py virtue-gedit
+```
+
+Whenever images are being built, the script ensures that the images defined in `base_image_tag` are built first.
 
 Start the Containers
 --------------------
 
-Before starting the remote containers, the SSHPUBKEY environment variable needs to be set. A future enhancement could be to take this in as a file or read it from some other location and setting it in the environment before actually starting the container, but it is required that you have it set first.
+Before starting the remote containers, the `ssh_authorized_keys_file` field in the config file needs to point to a valid file. Its content will be passed to the docker container as `SSHPUBKEY` environment variable with an assumption that sshd inside that container will only allow these keys to log in.
 
-Note that to run the Office Virtue or the PuTTY Virtue, you need to do a `docker load <virtue-office-installed.tar` or `docker load < virtue-putty-installed.tar` before running `virtue start`. We hope to remove this requirement in the future, but for now, the installation process is too difficult to automate.
+To start a specific container run
+```
+./run.py start samplecontainer
+```
+This container should be already built and described in the config file.
 
-Start all of the containers by running:
+Note that to run the Office Virtue or the PuTTY Virtue, you need to 
 ```
-./virtue start (Virtue.config)
+./run.py start office-prep
+# Make sure private key complement of ssh_authorized_key_file is available to you. See VirtueDockerConf.yaml
+ssh -i private_key -N -p 7000 -L 7001:localhost:2023 virtue@localhost
+xpra attach tcp:localhost:7001
+# Now use GUI to install office (or other windows apps)
+# exit out of xpra
+./run.py save office-prep office
 ```
-where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
+We hope to remove this requirement in the future, but for now, the installation process is too difficult to automate.
+
 
 Stopping the Containers
 ------------------------
 
 This will stop the containers:
 ```
-./virtue stop (Virtue.config)
+./run.py stop samplecontainer
 ```
-where you the Virtue.config file is optional (it will read from a file called Virtue.config by default, but you can pass your own).
-
 
 Building New Crossover-based Virtues
 ------------------------
