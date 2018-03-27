@@ -3,7 +3,9 @@
 #   samplecontainer:
 #       image_tag: virtue-sampleimage # image tag of this container, image name is virtue:virtue-simplecontainer
 #       listen_port: 8080 # used with docker expose
-#       args: --arg1 --arg2 # extra args to pass on container start
+#       args: {shm_value: 1g, read_only: False, ...} # a dictionary of python variables as keys and their values to use for python create
+#       apparmor: path-to-apparmor-profile # default: app-containers/apparmor/apparmor.samplecontainer.profile
+#       seccomp: path-to-seccomp-profile # default: app-containers/seccomp/seccomp.samplecontainer.json
 
 containers:
   gedit:
@@ -12,7 +14,8 @@ containers:
   firefox:
     image_tag: virtue-firefox
     listen_port: 6768
-    args: --shm-size=1g
+    args:
+      shm_size: 1g
   crossover:
     image_tag: virtue-crossover
     listen_port: 6769
