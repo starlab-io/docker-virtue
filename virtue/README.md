@@ -21,6 +21,12 @@ sets up a tunnel from the local port 6767 (gedit) or 6768 (firefox) to the port 
 the `xpra` port on port 2023 inside of the container for all containers). I chose to reuse the port number for my local client to be the
 same as the port that I am connecting to on the remote host.
 
+
+Dependencies
+------------
+
+Together `./build.py` and `run.py` depend on [docker-py](https://github.com/docker/docker-py)
+
 VirtueDockerConf.yaml
 -------------
 

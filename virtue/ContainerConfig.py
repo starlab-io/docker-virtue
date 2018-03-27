@@ -1,9 +1,18 @@
+# Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
+# Raytheon BBN Technologies
+
 import yaml, os
 
 class ContainerConfig():
+    ''' This class is a logic wrapper for the underlying yaml file.
+    aside from providing specific functions to access parts of the yaml file,
+    this class also runs a sanity check on most of the fields and provides default
+    values where applicable.
+    '''
     _DEFAULT_BUILD_PATH = 'app-containers'
     _DEFAULT_CONFIG_FILE = 'VirtueDockerConf.yaml'
 
+    # The following entries are just text mapping of fields in the yaml file
     _sshd_port = 'sshd_port'
     _ssh_authorized_keys = 'ssh_authorized_keys_file'
 
@@ -24,7 +33,17 @@ class ContainerConfig():
         self._sanity_check()
 
     def _sanity_check(self):
-        ''' Runs some sanity check on the config file '''
+        ''' Runs some sanity check on the config file.
+            - SSH authorized keys file doesn't exist
+            - ssh port collisions
+            - ssh using random ports
+            - containers without image
+            - containers with image tag that's not defined
+            - containers' seccomp file doesn't exist
+            - containers' apparmor file doesn't exist
+            - image's Dockerfile doesn't exist
+            - image's base image doesn't exist/isn't defined
+        '''
 
         if not os.path.exists(self.get_ssh_authorized_keys()):
             print("WARNING: ssh authorized keys file %s doesn't exist" % (self.get_ssh_authorized_keys()))

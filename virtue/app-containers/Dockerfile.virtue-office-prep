@@ -27,7 +27,7 @@ RUN apt-get update -q -y && apt-get install \
 
 # TODO: automate the installation of Office, somehow...
 
-ENV APP_TO_RUN /opt/cxoffice/bin/wine
+#ENV APP_TO_RUN /opt/cxoffice/bin/wine
 
 WORKDIR /home/virtue
 USER virtue

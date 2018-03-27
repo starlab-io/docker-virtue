@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
+# Raytheon BBN Technologies
+
 import sys, docker, subprocess, argparse
 from ContainerConfig import ContainerConfig
 
