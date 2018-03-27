@@ -96,7 +96,7 @@ class ContainerConfig():
 
     def get_sshd_port(self):
         ''' Get what port sshd inside the containers is listening on. Same for all containers'''
-        return self.data[self._docker_ssh_port]
+        return self.data[self._sshd_port]
 
     def get_image_from_tag(self, tag):
         ''' Adds repository name to tag '''

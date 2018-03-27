@@ -38,7 +38,7 @@ def start_container(conf, docker_client, container):
         ports = {conf.get_sshd_port(): conf.get_ssh_port(container)}
         environment = {'SSHPUBKEY': ssh_public_key}
 
-        docker_args = { 'ports': {conf.get_listen_port(container): 2022},
+        docker_args = { 'ports': ports,
             'image': image,
             'environment': environment,
             'security_opt': security_opt,

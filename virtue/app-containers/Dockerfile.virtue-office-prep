@@ -1,6 +1,6 @@
 # Crossover-docker minimal
 
-FROM virtue:virtuecxbase
+FROM virtue:virtue-crossover
 MAINTAINER Stanislav Ponomarev
 
 USER root

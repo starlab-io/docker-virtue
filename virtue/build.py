@@ -19,17 +19,17 @@ def build_image(conf, docker_client, tag_name):
         build_image(conf, docker_client, base)
     path = conf.get_build_path(tag_name)
     dockerfile = conf.get_Dockerfile(tag_name)
-    print("Building %s as %s" % (os.path.join(path, dockerfile), docker_image_name))
+    print("Building %s as %s ... " % (os.path.join(path, dockerfile), docker_image_name), end='', flush=True)
     try:
         img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
     except docker.errors.BuildError as e:
         print("A build error has happened!")
         print(e)
         cmd = 'docker build -t %s -f %s %s' % (docker_image_name, os.path.join(path, dockerfile), path)
-        print("Likely, something is wrong with the Dockerfile. Please run\n%s\nFor a more verbose error" % (cmd))
+        print("Likely, something is wrong with the Dockerfile. Please run\n\t%s\nFor a more verbose error" % (cmd))
         return None
         
-    print("%s is built." % (tag_name))
+    print('[OK]')
     return img
 
 
@@ -53,5 +53,4 @@ if __name__ == '__main__':
     for tag_name in toBuild:
         images[tag_name] = build_image(conf, docker_client, tag_name)
 
-    for img in images:
-        print(images[img])
+    print("Finished.")
