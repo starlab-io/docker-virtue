@@ -40,6 +40,7 @@ if __name__ == '__main__':
     conf = ContainerConfig()
     parser = argparse.ArgumentParser(description='Build Virtue Images')
     parser.add_argument('-l', '--list', required=False, help='List available images instead of building them', action='store_true')
+    parser.add_argument('-p', '--push', required=False, help='Push the image to the repository after building it. Make sure docker is authorized ahead of time with `docker login`.', action='store_true')
     parser.add_argument('image', nargs='?', default=None, help='Virtue Image to be built. Accepts only tags listed in %s. If unspecified, builds all of them.' % (conf._DEFAULT_CONFIG_FILE))
     args = parser.parse_args()
 
@@ -55,11 +56,14 @@ if __name__ == '__main__':
         else:
             toBuild.append(args.image)
 
-        print("Building %s..." % (', '.join(toBuild)))
         docker_client = docker.from_env()
 
         images = {}
         for tag_name in toBuild:
             images[tag_name] = build_image(conf, docker_client, tag_name)
+            if args.push:
+                print("Pushing %s to repository ..." % (tag_name), end='', flush=True)
+                docker_client.images.push(conf.get_repository(), tag_name)
+                print("[OK]")
 
         print("Finished.")

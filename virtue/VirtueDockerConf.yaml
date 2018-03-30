@@ -1,7 +1,7 @@
 sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configures sshd properly! Goes as docker start -p argument
 
 ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
-repository: virtue # what docker repository to use
+repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
 
 # Sample Container Entry:
 # containers:
@@ -28,11 +28,6 @@ containers:
         ssh_port: 6769
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
-    putty-prep:
-        image_tag: virtue-putty-prep
-        ssh_port: 6770
-        apparmor: None # This is an install container. Should be used only to install a given application
-        seccomp: None
     office:
         image_tag: virtue-office
         ssh_port: 6769
@@ -57,6 +52,4 @@ image_tags:
     virtue-firefox:
         base_image_tag: virtue-base
     virtue-office-prep:
-        base_image_tag: virtue-crossover
-    virtue-putty-prep:
         base_image_tag: virtue-crossover

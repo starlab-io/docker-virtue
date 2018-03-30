@@ -1,6 +1,6 @@
 # Crossover-docker minimal
 
-FROM virtue:virtue-crossover
+FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-crossover
 MAINTAINER Stanislav Ponomarev
 
 USER root

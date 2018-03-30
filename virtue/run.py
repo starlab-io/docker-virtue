@@ -19,6 +19,11 @@ def start_container(conf, docker_client, args):
         return
     container_obj = None
     container_name = container
+    if args.pull:
+        print("Pulling image from the repository...", end='', flush=True)
+        docker_client.images.pull(conf.get_repository(), conf.get_container_image_tag(container_name))
+        print("[OK]")
+
     try:
         container_obj = docker_client.containers.get(container_name)
         print("Starting existing container")
@@ -39,17 +44,24 @@ def start_container(conf, docker_client, args):
         security_opt = []
         if apparmor_file and seccomp_file:
             profile_name = 'docker-%s' % (container)
+            # unlike seccomp, apparmor has a parser that needs to run aside from docker.
+            # the parser will take apparmor file with a profile definition and store it
+            # in its own database. Docker then just references it by profile name.
+            # we decided that apparmor profiles will be called 'docker-%s' % (container_name)
+            # so the following structure makes sure that the apparmor file contains 
+            # the properly named profile
             print("Ensuring that the AppArmor profile is enabled for %s" % (container))
             with open(apparmor_file, 'r') as f:
                 for line in f:
                     if 'profile' in line:
                         if profile_name in line:
-                            print("Found profile match: '%s'" % line[:-1])
+                            print("Found profile match: '%s'" % line[:-1]) # remove /n from the line
                         else:
                             print("WARNING: AppArmor profile name does not match '%s'. App armor will error!" % (profile_name))
                         break
-                
-            #subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', apparmor_file])
+            # call the parser to load this profile
+            subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', apparmor_file])
+            print("NOTE: Apparmor files are re-read only on container creation. If you change the file content, please remove the container and this this script again")
             security_opt.append('apparmor=%s' % (profile_name))
             if args.debug:
                 docker_cmd.extend(['--security-opt', '"apparmor=%s"' % (profile_name)])
@@ -153,6 +165,7 @@ if __name__ == '__main__':
     parser.add_argument('container', nargs='?', help='Docker container name as specified in %s. Get available list with "list" command.' % (conf._DEFAULT_CONFIG_FILE))
     parser.add_argument('output', metavar='save_destination', nargs='?', default=None, help='Destination container for save command')
     parser.add_argument('-d', '--debug', action='store_true', help='On docker faliure, output a docker command for bash that can perform the same action that failed')
+    parser.add_argument('-p', '--pull', action='store_true', help='Pull the image from the repository before starting it. Make sure docker is authorized ahead of time with `docker login`')
 
     args = parser.parse_args()
     docker_client = docker.from_env()

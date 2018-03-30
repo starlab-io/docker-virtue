@@ -163,7 +163,10 @@ class ContainerConfig():
 
     def get_container_image(self, container_name):
         ''' Find full image reference (repo:tag) by container name'''
-        return self.get_image_from_tag(self.data[self._containers][container_name][self._image_tag])
+        return self.get_image_from_tag(self.get_container_image_tag(container_name))
+
+    def get_container_image_tag(self, container_name):
+        return self.data[self._containers][container_name][self._image_tag]
 
     def get_apparmor_file(self, container_name):
         ''' Get file path to an apparmor profile by a container name. 
