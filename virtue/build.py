@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
 # Raytheon BBN Technologies

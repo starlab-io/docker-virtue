@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
 # Raytheon BBN Technologies
@@ -155,13 +155,28 @@ def save_container(conf, docker_client, args):
         
     container_obj.commit(repository=repo, tag=output)
     print("New image '%s' is saved" % (output))
+
+def pack_container(conf, args):
+    file_list = []
+    file_list.append('run.py')
+    file_list.append(conf._DEFAULT_CONFIG_FILE)
+    file_list.append('ContainerConfig.py')
+    apparmor = conf.get_apparmor_file(args.container)
+    seccomp = conf.get_seccomp_file(args.container)
+    if apparmor is not None:
+        file_list.append(apparmor)
+    if seccomp is not None:
+        file_list.append(seccomp)
+    cmd = ['tar', 'czf', args.container+'.tar.gz']
+    cmd.extend(file_list)
+    subprocess.check_call(cmd)
     
 
 
 if __name__ == '__main__':
     conf = ContainerConfig()
     parser = argparse.ArgumentParser(description='Manage Virtue Containers')
-    parser.add_argument('action', choices=['start', 'stop', 'save', 'list'], help='start|stop|save a container or list known virtue containers')
+    parser.add_argument('action', choices=['start', 'stop', 'save', 'pack', 'list'], help='start|stop|save a container or list known virtue containers. Or pack everything needed to start a container into a tarball')
     parser.add_argument('container', nargs='?', help='Docker container name as specified in %s. Get available list with "list" command.' % (conf._DEFAULT_CONFIG_FILE))
     parser.add_argument('output', metavar='save_destination', nargs='?', default=None, help='Destination container for save command')
     parser.add_argument('-d', '--debug', action='store_true', help='On docker faliure, output a docker command for bash that can perform the same action that failed')
@@ -183,6 +198,8 @@ if __name__ == '__main__':
     elif args.action == 'list':
         print("The following containers are available:")
         print('\n'.join(conf.get_container_names()))
+    elif args.action == 'pack':
+        pack_container(conf, args)
     else:
         print("opt == '%s'" % (opt))
         print_usage_and_exit()
