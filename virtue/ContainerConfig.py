@@ -30,9 +30,8 @@ class ContainerConfig():
 
     def __init__(self):
         self.load(self._DEFAULT_CONFIG_FILE)
-        self._sanity_check()
 
-    def _sanity_check(self):
+    def sanity_check(self):
         ''' Runs some sanity check on the config file.
             - SSH authorized keys file doesn't exist
             - ssh port collisions

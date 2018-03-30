@@ -51,6 +51,7 @@ def start_container(conf, docker_client, container):
         # add any extra args from the yaml file
         docker_args.update(conf.get_extra_docker_args(container))
         try:
+            print("Running docker with the following arguments:\n%s" % (docker_args))
             container_obj = docker_client.containers.create(**docker_args)
         except docker.errors.APIError as e:
             print(e)
@@ -101,12 +102,13 @@ def save_container(conf, docker_client, container, output):
 if __name__ == '__main__':
     conf = ContainerConfig()
     parser = argparse.ArgumentParser(description='Manage Virtue Containers')
-    parser.add_argument('action', choices=['start', 'stop', 'save'], help='start|stop|save a container')
-    parser.add_argument('container', help='Docker container name as specified in %s.' % (conf._DEFAULT_CONFIG_FILE))
+    parser.add_argument('action', choices=['start', 'stop', 'save', 'list'], help='start|stop|save a container or list known virtue containers')
+    parser.add_argument('container', nargs='?', help='Docker container name as specified in %s. Get available list with "list" command.' % (conf._DEFAULT_CONFIG_FILE))
     parser.add_argument('output', metavar='save_destination', nargs='?', default=None, help='Destination container for save command')
 
     args = parser.parse_args()
     docker_client = docker.from_env()
+    conf.sanity_check()
 
     if args.action =='start':
         start_container(conf, docker_client, args.container)
@@ -117,6 +119,9 @@ if __name__ == '__main__':
         save_container(conf, docker_client, args.container, args.output)
     elif args.action == 'stop':
         stop_container(conf, docker_client, args.container)
+    elif args.action == 'list':
+        print("The following containers are available:")
+        print('\n'.join(conf.get_container_names()))
     else:
         print("opt == '%s'" % (opt))
         print_usage_and_exit()
