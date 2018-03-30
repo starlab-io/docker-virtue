@@ -83,6 +83,9 @@ def start_container(conf, docker_client, args):
             'security_opt': security_opt,
             'name': container_name,
         }
+
+        if args.restart:
+            doker_args['restart_policy'] = {"Name": "always", "MaximumRetryCount": 5}
         
         # add any extra args from the yaml file
         extra_args = conf.get_extra_docker_args(container)
@@ -181,6 +184,7 @@ if __name__ == '__main__':
     parser.add_argument('output', metavar='save_destination', nargs='?', default=None, help='Destination container for save command')
     parser.add_argument('-d', '--debug', action='store_true', help='On docker faliure, output a docker command for bash that can perform the same action that failed')
     parser.add_argument('-p', '--pull', action='store_true', help='Pull the image from the repository before starting it. Make sure docker is authorized ahead of time with `docker login`')
+    parser.add_argument('-r', '--restart', action='store_true', help='Start the docker container with always restart restart policy')
 
     args = parser.parse_args()
     docker_client = docker.from_env()
