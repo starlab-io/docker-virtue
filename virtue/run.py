@@ -85,7 +85,7 @@ def start_container(conf, docker_client, args):
         }
 
         if args.restart:
-            doker_args['restart_policy'] = {"Name": "always", "MaximumRetryCount": 5}
+            docker_args['restart_policy'] = {"Name": "always"}
         
         # add any extra args from the yaml file
         extra_args = conf.get_extra_docker_args(container)
@@ -106,7 +106,7 @@ def start_container(conf, docker_client, args):
             print("[OK]")
         except docker.errors.APIError as e:
             print(e)
-            if debug:
+            if args.debug:
                 print('\nError occoured while running command:')
                 print(' '.join(docker_cmd))
 
