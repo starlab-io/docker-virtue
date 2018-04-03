@@ -41,7 +41,7 @@ def start_container(conf, docker_client, args):
             
             security_opt = []
             if apparmor_file and seccomp_file:
-                profile_name = 'docker-%s' % (container)
+                profile_name = 'docker_%s' % (container)
                 # unlike seccomp, apparmor has a parser that needs to run aside from docker.
                 # the parser will take apparmor file with a profile definition and store it
                 # in its own database. Docker then just references it by profile name.

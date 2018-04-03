@@ -3,7 +3,7 @@
 #include <tunables/global>
 
 
-profile docker-office flags=(attach_disconnected,mediate_deleted) {
+profile docker_office flags=(attach_disconnected,mediate_deleted) {
 
   #include <abstractions/base>
 

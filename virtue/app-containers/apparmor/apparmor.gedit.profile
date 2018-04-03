@@ -3,7 +3,7 @@
 #include <tunables/global>
 
 
-profile docker-gedit flags=(attach_disconnected,mediate_deleted) {
+profile docker_gedit flags=(attach_disconnected,mediate_deleted) {
 
   #include <abstractions/base>
 
