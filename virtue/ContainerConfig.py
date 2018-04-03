@@ -79,8 +79,15 @@ class ContainerConfig():
 
             # Warn if apparmor file doesn't exist
             apparmor = self.get_apparmor_file(app_name)
-            if apparmor is not None and not os.path.exists(apparmor):
-                print("WARNING: Container %s is meant to use apparmor file %s which doesn't exist" % (app_name, apparmor))
+            if apparmor is not None:
+                iter_data = []
+                if type(apparmor) is list:
+                    iter_data = apparmor
+                else:
+                    iter_data = [apparmor]
+                for apparmor_entry in iter_data:
+                    if not os.path.exists(apparmor_entry):
+                        print("WARNING: Container %s is meant to use apparmor file %s which doesn't exist" % (app_name, apparmor_entry))
 
         for img_tag in self.get_tag_names():
             dockerfile_path = os.path.join(self.get_build_path(img_tag), self.get_Dockerfile(img_tag))
