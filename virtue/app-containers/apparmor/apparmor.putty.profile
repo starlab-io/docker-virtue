@@ -51,6 +51,12 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/python>
 
   ########################
+  # Main application goes here!
+  ########################
+  /opt/cxoffice/bin/crossover rmpx -> crossover,
+
+
+  ########################
   # Non-file stuff
   ########################
   network unix stream,
@@ -84,7 +90,7 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   ########################
   # Core XPRA files
   ########################
-  /usr/bin/xpra rmix,
+  /usr/bin/xpra rmpix -> xpra,
   /{,docker/overlay2/*/diff/}etc/xpra/conf.d/ r,
   /{,docker/overlay2/*/diff/}etc/xpra/conf.d/** r,
   /home/virtue/.xpra/** rw,
@@ -97,13 +103,23 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   /home/virtue/.dbus/session-bus/ rw,
   /home/virtue/.dbus/session-bus/** rw,
 
+  /home/virtue/.*-fakexinerama rw,
+  /home/virtue/.fakexinerama rw,
+
+  /home/virtue/.Xauthority* lrw,
+  /{,docker/overlay2/*/diff/}home/virtue/.xpra/pulse/ r,
+
   /run/xpra/ rw,
+  /etc/xpra/xpra.conf r,
 
   ########################
   # Devices & Interfaces
   ########################
   /sys/devices/virtual/misc/uinput/uevent r,
   /sys/module/apparmor/parameters/enabled r,
+  /proc/sys/net/core/somaxconn r,
+  /proc/sys/net/unix/max_dgram_qlen r,
+  /proc/sys/net/ipv4/* r,
 
 
   ########################
@@ -114,6 +130,7 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   @{PROC}/@{pid}/mounts r,
   @{PROC}/@{pid}/pid r,
   @{PROC}/@{pid}/fd/ r,
+  @{PROC}/loadavg r,
 
 
   ########################
@@ -125,7 +142,19 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   /etc/magic r,
   /etc/mime.types r,
   /usr/share/file/** r,
-  /home/virtue/.Xauthority* lrw,
+  /etc/lsb-release r,
+
+  /usr/share/X11/xkb/keycodes/evdev r,  
+  /etc/pulse/client.conf r,
+
+  /usr/share/alsa/alsa.conf r,
+  /{,docker/overlay2/*/diff/}usr/share/alsa/alsa.conf.d/ r,
+  /{,docker/overlay2/*/diff/}usr/share/alsa/alsa.conf.d/* r,
+  /usr/share/alsa/cards/aliases.conf r,
+  /usr/share/alsa/pcm/*.conf r,
+
+  /dev/shm/ r,
+  /dev/shm/pulse-shm-* rw,
 
 
   ########################
@@ -155,7 +184,6 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   /{,docker/overlay2/*/diff/}usr/lib/x86_64-linux-gnu/gio/modules/ r,
 
 
-
   ########################
   # Helper applications
   ########################
@@ -167,6 +195,7 @@ profile xpra flags=(attach_disconnected,mediate_deleted) {
   /bin/uname rmix,
   /usr/bin/file rmix,
   /usr/sbin/lpinfo rmix,
+  /usr/sbin/lpadmin rmix,
 
   /usr/bin/Xvfb rmpx -> xpra_xvfb,
 
@@ -189,7 +218,7 @@ profile xpra_xvfb flags=(attach_disconnected,mediate_deleted) {
   /home/virtue/.xpra/xpra/*.log rw,
 
   /tmp/** rw,
-
+  /{,docker/overlay2/*/diff/}tmp/.X11-unix/ rw,
 
   @{PROC}/@{pid}/cmdline r,
   @{PROC}/@{pid}/status r,
@@ -206,6 +235,8 @@ profile xpra_xvfb flags=(attach_disconnected,mediate_deleted) {
 }
 
 # ------------------------------------ sshd ------------------------------------
+# Note: this is based on a profile from GitHub, and it's probably over-permissioned
+# for what we're actually using SSHD for...
 
 profile sshd flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/authentication>
@@ -246,7 +277,7 @@ profile sshd flags=(attach_disconnected,mediate_deleted) {
   /etc/hosts.allow r,
   /etc/hosts.deny r,
   /etc/modules.conf r,
-  /etc/security/** r,
+  /{,docker/overlay2/*/diff/}etc/security/** r,
   /etc/ssh/** r,
   /etc/ssl/openssl.cnf r,
   /usr/sbin/sshd mrix,
@@ -254,6 +285,12 @@ profile sshd flags=(attach_disconnected,mediate_deleted) {
   owner /{,var/}run/sshd{,.init}.pid wl,
   owner /{,var/}run/systemd/notify w,
   @{HOME}/.ssh/authorized_keys{,2} r,
+
+  /home/virtue/sshd_config r,
+  /home/virtue/.ssh/* r,
+  /home/virtue/.cache/ rw,
+  /home/virtue/.cache/** rw,
+  /home/virtue/.cache/motd.legal-displayed rw,
 
   @{PROC}/cmdline r,
   @{PROC}/1/environ r,
@@ -277,25 +314,225 @@ profile sshd flags=(attach_disconnected,mediate_deleted) {
 
   /sbin/unix_chkpwd rmix,
 
-  # duplicated from AUTHENTICATED
-  /etc.legal r,
+  /etc/legal r,
   /etc/motd r,
   /{,var/}run/motd{,.dynamic}{,.new} rw,
   /tmp/ssh-[a-zA-Z0-9]*/ w,
   /tmp/ssh-[a-zA-Z0-9]*/agent.[0-9]* wl,
 
-  # for internal-sftp
-  /         r,
-  /**       r,
-  owner /** rwl,
-
-  /usr/lib/openssh/sftp-server PUx,
-
   # This is for shells launched by SSHD
-  profile ssh_shell {
+  profile ssh_shell flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/consoles>
     #include <abstractions/bash>
     #include <abstractions/authentication>
+
+    /dev/null rw,
+
+    /{,docker/overlay2/*/diff/}etc/ld.so.cache r,
+    /{,docker/overlay2/*/diff/}lib/x86_64-linux-gnu/*.so mr,
+
+    /run/motd.dynamic.new rw,
+
+    /bin/dash rmix,
   }
+}
+
+# -------------------------------- crossover ------------------------------------
+
+profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/fonts>
+  #include <abstractions/gnome>
+  #include <abstractions/nameservice>
+  #include <abstractions/perl>
+  #include <abstractions/python>
+
+  ###############################
+  # Sockets
+  ###############################
+  unix (send, receive, connect) peer=(addr="@/tmp/.X11-unix/X0"),
+
+
+  ###############################
+  # Python
+  ###############################
+  /usr/bin/env rmix,
+  /usr/bin/python2.7 rmix,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python{2.[4-7],3.[0-5]}/**.{py,pyc,so}           mr,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python{2.[4-7],3.[0-5]}/**.{egg,py,pth}       r,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python{2.[4-7],3.[0-5]}/{site,dist}-packages/ r,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python{2.[4-7],3.[0-5]}/{site,dist}-packages/** r,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python3.[0-5]/            r,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python3.[0-5]/*/            r,
+  /{,docker/overlay2/*/diff/}usr/lib{,32,64}/python3.[0-5]/lib-dynload/*.so            mr,
+  /{,docker/overlay2/*/diff/}usr/local/lib{,32,64}/python{2.[4-7],3.[0-5]}/**.{pyc,so}           mr,
+  /{,docker/overlay2/*/diff/}usr/local/lib{,32,64}/python{2.[4-7],3.[0-5]}/**.{egg,py,pth}       r,
+  /{,docker/overlay2/*/diff/}usr/local/lib{,32,64}/python{2.[4-7],3.[0-5]}/{site,dist}-packages/ r,
+  /{,docker/overlay2/*/diff/}usr/local/lib{,32,64}/python{2.[4-7],3.[0-5]}/{site,dist}-packages/** r,
+  /{,docker/overlay2/*/diff/}usr/local/lib{,32,64}/python3.[0-5]/lib-dynload/*.so            mr,
+  /{,docker/overlay2/*/diff/}usr/lib/python3/dist-packages/                  r,
+  /{,docker/overlay2/*/diff/}usr/lib/python3/dist-packages/**.so                   mr,
+
+
+  ###############################
+  # Crossover Core
+  ###############################
+  /opt/cxoffice/bin/crossover r,
+
+  /opt/cxoffice/lib/python/*.py r,
+  /opt/cxoffice/lib/python/*.pyc rw,
+  /opt/cxoffice/lib/python/**/*.py r,
+  /opt/cxoffice/lib/python/**/*.pyc rw,
+  /opt/cxoffice/lib/python/glade/*.ui r,
+
+  /opt/cxoffice/lib/perl/*.pm r,
+
+  /{,docker/overlay2/*/diff/}opt/cxoffice/share/** r,
+
+  /{,docker/overlay2/*/diff/}opt/cxoffice/support/ r,
+  /{,docker/overlay2/*/diff/}opt/cxoffice/support/** r,
+
+  /opt/cxoffice/etc/cxoffice.conf r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/ rw,
+
+  /opt/cxoffice/bin/cxassoc rmix,
+  /opt/cxoffice/bin/cxbottle rmix,
+  /opt/cxoffice/bin/cxdiag rmix,
+  /opt/cxoffice/bin/cxmenu rmix,
+  /opt/cxoffice/bin/cxstart rmix,
+  /opt/cxoffice/bin/cxupdatecheck rmix,
+  /opt/cxoffice/bin/wine rmix,
+  /opt/cxoffice/bin/wineloader rmpix -> wineloader,
+
+
+  ###############################
+  # /proc
+  ###############################
+  @{PROC}/@{pid}/cmdline r,
+  @{PROC}/@{pid}/status r,
+  @{PROC}/@{pid}/mounts r,
+  @{PROC}/@{pid}/pid r,
+  @{PROC}/@{pid}/fd/ r,
+
+
+  ###############################
+  # Helpers
+  ###############################
+  /bin/dash rmix,
+  /bin/egrep rmix,
+  /bin/grep rmix,
+
+
+  ###############################
+  # Misc.
+  ###############################
+  /home/virtue/.Xauthority r,
+  /home/virtue/.xpra/xpra/*.log rw,
+  /{,docker/overlay2/*/diff/}tmp/ rw,
+  /{,docker/overlay2/*/diff/}tmp/** rw, 
+  /dev/shm/* lrw,
+  /usr/share/mime/** r,
+  /etc/drirc r,
+  /etc/fstab r,
+
+  # Font stuff that's broken because of Docker overlay
+  /{,docker/overlay2/*/diff/}etc/fonts/conf.d/ r,
+  /{,docker/overlay2/*/diff/}etc/fonts/conf.d/** r,
+  /{,docker/overlay2/*/diff/}usr/local/share/fonts/ r,
+  /{,docker/overlay2/*/diff/}usr/local/share/fonts/** r,
+
+  /var/cache/fontconfig/ rw,
+  /home/virtue/.cache/fontconfig/ rw,
+  /home/virtue/.cache/fontconfig/** rw,
+
+  /home/virtue/.config/gtk-2.0/ rw,
+
+  /{,docker/overlay2/*/diff/}usr/share/{icons,pixmaps,fonts,poppler}/ r,
+  /{,docker/overlay2/*/diff/}usr/share/{icons,pixmaps,fonts,poppler}/** r,
+
+  /{,docker/overlay2/*/diff/}etc/ld.so.cache r,
+  /{,docker/overlay2/*/diff/}lib/x86_64-linux-gnu/*.so mr,
+  
+  /{,docker/overlay2/*/diff/}usr/lib/x86_64-linux-gnu/gio/modules/ r,
+
+
+  ##################################################################################
+  #                                                                                #
+  #                 THIS IS THE ACTUAL APPLICATION-RELEVANT PART!                  #
+  #                                                                                #  
+  ##################################################################################
+
+  /{,docker/overlay2/*/diff/} r,
+  /home/virtue/.cxoffice/logs/ rw,
+  /tmp/cxlog.cxlog ra,
+
+  /home/virtue/.cxoffice/cxoffice.conf rw,
+  /home/virtue/.cxoffice/cxoffice.conf.tmp rw,
+
+  /home/virtue/.cxoffice/PuTTY/*.conf r,
+  /home/virtue/.cxoffice/PuTTY/*.reg r,
+  /home/virtue/.cxoffice/PuTTY/windata/** r,
+
+}
+
+# -------------------------------- wineloader ------------------------------------
+
+profile wineloader flags=(complain,attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/authentication>
+  #include <abstractions/nameservice>
+  #include <abstractions/python>
+
+  /{,docker/overlay2/*/diff/}home/virtue/ r,
+  /home/virtue/.xpra/xpra/*.log rw,
+
+  /opt/cxoffice/lib/lib*.so* rm,  
+  /opt/cxoffice/lib/wine/*.so rm,
+
+  /opt/cxoffice/bin/wine-preloader rmpix -> wine_preloader,
+  /opt/cxoffice/bin/* rmix,
+  
+  /home/virtue/.cxoffice/PuTTY/ rw,
+  /home/virtue/.cxoffice/PuTTY/** rw,
+
+  /tmp/cxlog.cxlog ra,
+
+}
+
+profile wine_preloader flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/fonts>
+  #include <abstractions/nameservice>
+
+  network unix stream,
+
+  /{,docker/overlay2/*/diff/}home/virtue/ r,
+  /tmp/cxlog.cxlog ra,
+
+  "/home/virtue/.cxoffice/PuTTY/drive_c/Program Files/PuTTY/putty.exe" r,
+  /home/*/.cxoffice/PuTTY/drive_c/**/ r,
+  /home/virtue/ r,
+  /home/virtue/.cache/fontconfig/* r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/ r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/*/ r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/advapi32.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/crypt32.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/gdi32.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/imm32.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/rsaenh.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/user32.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/version.dll r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/wineboot.exe r,
+  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/winewrapper.exe r,
+  /lib/i386-linux-gnu/ld-*.so mr,
+  /opt/cxoffice/bin/wine-preloader r,
+  /opt/cxoffice/bin/wineloader mr,
+  /opt/cxoffice/etc/license.sig r,
+  /opt/cxoffice/etc/license.txt r,
+  /opt/cxoffice/lib/lib*so* mr,
+  /opt/cxoffice/lib/wine/* mr,
+  /opt/cxoffice/share/crossover/data/tie.pub r,
+  /proc/*/mounts r,
+  /proc/scsi/scsi r,
 
 }
