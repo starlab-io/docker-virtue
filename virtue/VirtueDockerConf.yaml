@@ -1,7 +1,6 @@
 sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configures sshd properly! Goes as docker start -p argument
 
-#ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
-ssh_authorized_keys_file: /home/ajordan/.ssh/authorized_keys
+ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
 repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
 
 # Sample Container Entry:
@@ -35,6 +34,7 @@ containers:
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
+        seccomp: None
 
 
 # Sample Image Entry:

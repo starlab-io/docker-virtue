@@ -30,6 +30,9 @@ USER virtue
 RUN mkdir -p /home/virtue/.cxoffice
 
 COPY PuTTY.cxarchive /home/virtue/.cxoffice/
-RUN cd /home/virtue/.cxoffice && tar -zxf PuTTY.cxarchive
+RUN cd /home/virtue/.cxoffice && tar -zxf PuTTY.cxarchive && rm PuTTY.cxarchive
+
+COPY cxlicense.sig /opt/cxoffice/etc/license.sig
+COPY cxlicense.txt /opt/cxoffice/etc/license.txt 
 
 ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup

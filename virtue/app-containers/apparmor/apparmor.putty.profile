@@ -339,7 +339,7 @@ profile sshd flags=(attach_disconnected,mediate_deleted) {
 
 # -------------------------------- crossover ------------------------------------
 
-profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
+profile crossover flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
   #include <abstractions/fonts>
   #include <abstractions/gnome>
@@ -393,6 +393,8 @@ profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
   /{,docker/overlay2/*/diff/}opt/cxoffice/support/** r,
 
   /opt/cxoffice/etc/cxoffice.conf r,
+  /opt/cxoffice/etc/license.sig r,
+  /opt/cxoffice/etc/license.txt r,
   /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/ rw,
 
   /opt/cxoffice/bin/cxassoc rmix,
@@ -421,6 +423,7 @@ profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
   /bin/dash rmix,
   /bin/egrep rmix,
   /bin/grep rmix,
+  /usr/bin/openssl rmix,
 
 
   ###############################
@@ -434,6 +437,7 @@ profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
   /usr/share/mime/** r,
   /etc/drirc r,
   /etc/fstab r,
+  /etc/ssl/openssl.cnf r,
 
   # Font stuff that's broken because of Docker overlay
   /{,docker/overlay2/*/diff/}etc/fonts/conf.d/ r,
@@ -477,7 +481,7 @@ profile crossover flags=(complain,attach_disconnected,mediate_deleted) {
 
 # -------------------------------- wineloader ------------------------------------
 
-profile wineloader flags=(complain,attach_disconnected,mediate_deleted) {
+profile wineloader flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
   #include <abstractions/authentication>
   #include <abstractions/nameservice>
@@ -489,9 +493,9 @@ profile wineloader flags=(complain,attach_disconnected,mediate_deleted) {
   /opt/cxoffice/lib/lib*.so* rm,  
   /opt/cxoffice/lib/wine/*.so rm,
 
-  /opt/cxoffice/bin/wine-preloader rmpix -> wine_preloader,
-  /opt/cxoffice/bin/* rmix,
-  
+  /opt/cxoffice/bin/wine-preloader rmpx -> wine_preloader,
+  /opt/cxoffice/bin/cxupdatecheck rmix,
+
   /home/virtue/.cxoffice/PuTTY/ rw,
   /home/virtue/.cxoffice/PuTTY/** rw,
 
@@ -506,33 +510,101 @@ profile wine_preloader flags=(attach_disconnected,mediate_deleted) {
 
   network unix stream,
 
-  /{,docker/overlay2/*/diff/}home/virtue/ r,
-  /tmp/cxlog.cxlog ra,
+  /{,docker/overlay2/*/diff/}tmp/.wine-*/** rw,
 
-  "/home/virtue/.cxoffice/PuTTY/drive_c/Program Files/PuTTY/putty.exe" r,
-  /home/*/.cxoffice/PuTTY/drive_c/**/ r,
-  /home/virtue/ r,
-  /home/virtue/.cache/fontconfig/* r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/ r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/*/ r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/advapi32.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/crypt32.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/gdi32.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/imm32.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/rsaenh.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/user32.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/version.dll r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/wineboot.exe r,
-  /home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/winewrapper.exe r,
+  
+  /tmp/cxlog.cxlog ra,
+  /home/virtue/.xpra/xpra/*.log rw,
+ 
+  /opt/cxoffice/bin/wineserver64 rmpx -> wineserver,
+  /opt/cxoffice/bin/wineserver   rmpx -> wineserver,
+  /opt/cxoffice/bin/wine-preloader rmpx -> wine_preloader,
+  /opt/cxoffice/bin/wineloader rmpx -> wineloader,
+
+  /opt/cxoffice/bin/cxntlm_auth rmix,
+
+  /home/virtue/.Xauthority r,
+  /home/virtue/.cxoffice/PuTTY/.update-timestamp rw,
+  
+  /{,docker/overlay2/*/diff/}home/virtue/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/** r, # yikes
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/users/crossover/PUTTY.RND rwkl,
+
+  "/{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/Program Files/PuTTY/putty.exe" r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/advapi32.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/crypt32.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/gdi32.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/imm32.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/rsaenh.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/user32.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/version.dll r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/wineboot.exe r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/system32/winewrapper.exe r,
+  
   /lib/i386-linux-gnu/ld-*.so mr,
-  /opt/cxoffice/bin/wine-preloader r,
-  /opt/cxoffice/bin/wineloader mr,
+
   /opt/cxoffice/etc/license.sig r,
   /opt/cxoffice/etc/license.txt r,
   /opt/cxoffice/lib/lib*so* mr,
-  /opt/cxoffice/lib/wine/* mr,
+  /opt/cxoffice/lib/wine/** mr,
   /opt/cxoffice/share/crossover/data/tie.pub r,
+  /opt/cxoffice/share/wine/wine.inf r,
+
+  /var/cache/fontconfig/ rw,
+  /home/virtue/.cache/fontconfig/ rw,
+  /home/virtue/.cache/fontconfig/** rw,
+
+  /{,docker/overlay2/*/diff/}opt/cxoffice/share/wine/fonts/ r, 
+  /{,docker/overlay2/*/diff/}opt/cxoffice/share/wine/fonts/** r, 
+  
+  /{,docker/overlay2/*/diff/}etc/fonts/conf.d/ r,
+  /{,docker/overlay2/*/diff/}etc/fonts/conf.d/** r,
+  /{,docker/overlay2/*/diff/}usr/local/share/fonts/ r,
+  /{,docker/overlay2/*/diff/}usr/local/share/fonts/** r,
+  /{,docker/overlay2/*/diff/}usr/share/{icons,pixmaps,fonts,poppler}/ r,
+  /{,docker/overlay2/*/diff/}usr/share/{icons,pixmaps,fonts,poppler}/** r,
+
+
   /proc/*/mounts r,
   /proc/scsi/scsi r,
+
+  signal (send,receive) set=(usr1,quit) peer=wineserver,
+
+}
+
+profile wineserver flags=(attach_disconnected,mediate_deleted) {
+  
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  network unix stream,
+
+  signal (send,receive) set=(usr1,quit) peer=wine_preloader,
+
+
+  /{,docker/overlay2/*/diff/}tmp/.wine-*/** rw,
+  /tmp/cxlog.cxlog ra,
+
+  /opt/cxoffice/etc/* r,
+
+  /opt/cxoffice/lib{,64}/** mr,   # this could be better...
+
+  /home/virtue/.cxoffice/usage.log rw,
+
+  /{,docker/overlay2/*/diff/}home/virtue/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/ r,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/** r,   # ugh
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/users/crossover/PUTTY.RND rw,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/drive_c/windows/PUTTY.RND rw,
+
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/system.reg rw,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/userdef.reg rw,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/user.reg rw,
+  /{,docker/overlay2/*/diff/}home/virtue/.cxoffice/PuTTY/reg* rw,
 
 }

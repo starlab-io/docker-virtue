@@ -40,7 +40,7 @@ def start_container(conf, docker_client, args):
                 docker_cmd = ['docker', 'create', '--env', '"SSHPUBKEY=`cat \"%s\"`"' % (conf.get_ssh_authorized_keys()), '--name', container_name]
             
             security_opt = []
-            if apparmor_file and seccomp_file:
+            if apparmor_file:
                 profile_name = 'docker_%s' % (container)
                 # unlike seccomp, apparmor has a parser that needs to run aside from docker.
                 # the parser will take apparmor file with a profile definition and store it
@@ -50,12 +50,10 @@ def start_container(conf, docker_client, args):
                 # the properly named profile
                 print("Ensuring that the AppArmor profile is enabled for %s" % (container))
 
-
-
                 if type(apparmor_file) is list:
                     for file_entry in apparmor_file:
                         # call the parser to load this profile
-                        subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', file_entry])
+                        subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', file_entry])                    
                 else:
                     # The following `with` block opens apparmor file and looks for profile_name inside the file
                     # But for the cases of multiple apparmor files this logic is way more complicated. 
@@ -72,12 +70,19 @@ def start_container(conf, docker_client, args):
                     subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', apparmor_file])
                     
                 print("NOTE: Apparmor files are re-read only on container creation. If you change the file content, please remove the container and this this script again")
+                print("NOTE: Applying apparmor profile %s" % profile_name)
                 security_opt.append('apparmor=%s' % (profile_name))
+                
                 if args.debug:
                     docker_cmd.extend(['--security-opt', '"apparmor=%s"' % (profile_name)])
-                    docker_cmd.extend(['--security-opt', '"seccomp=%s"' % (seccomp_file)])
+                
+            if seccomp_file is not None:
                 with open(seccomp_file, 'r') as f:
+                    print("NOTE: Applying seccomp file %s" % seccomp_file)
                     security_opt.append('seccomp=%s' % (f.read()))
+                if args.debug:
+                    docker_cmd.extend(['--security-opt', '"seccomp=%s"' % (seccomp_file)])
+
             # ports format: { inside_container: outside_container}
             ports = {conf.get_sshd_port(): conf.get_ssh_port(container)}
             if args.debug:
