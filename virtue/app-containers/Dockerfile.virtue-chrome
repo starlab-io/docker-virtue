@@ -1,0 +1,20 @@
+FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-base
+MAINTAINER Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+	echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google-chrome.list && \
+	apt-get update && \
+    apt-get -qy install locales google-chrome-stable
+RUN locale-gen en_US.UTF-8 && \
+	update-locale LANG=en_US.UTF-8 && \
+	apt-get autoremove -y && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+
+ENV APP_TO_RUN "google-chrome-stable --no-sandbox"
+WORKDIR /home/virtue
+USER virtue
