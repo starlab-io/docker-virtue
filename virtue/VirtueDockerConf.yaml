@@ -38,6 +38,9 @@ containers:
         ssh_port: 6769
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
+    powershell:
+        image_tag: virtue-powershell
+        ssh_port: 6761
     wincmd:
         image_tag: virtue-wincmd
         ssh_port: 6762
@@ -75,6 +78,8 @@ image_tags:
         base_image_tag: virtue-base
     virtue-skype:
         base_iamge_tag: virtue-base
+    virtue-powershell:
+        base_image_tag: virtue-base
     virtue-office-prep:
         base_image_tag: virtue-crossover
     virtue-wincmd:
