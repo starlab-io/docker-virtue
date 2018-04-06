@@ -1,0 +1,29 @@
+FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-base
+MAINTAINER Alex Jordan <alex.jordan@raytheon.com>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+# Undo the amd64-only transform
+ RUN sed -e 's:deb \[arch\=amd64\] h:deb h:' -e 's:deb-src \[arch\=amd64\] h:deb-src h:' -i /etc/apt/sources.list && \
+    find /etc/apt/sources.list.d/ -type f -exec sed -e 's:deb \[arch\=amd64\] h:deb h:' -i {} \;
+
+# Install Crossover
+# Official instructions for installing Crossover specify installing through gdebi
+RUN wget -q https://media.codeweavers.com/pub/crossover/cxlinux/demo/crossover_16.2.5-1.deb && \
+    dpkg --add-architecture i386 && \
+    apt-get update -q -y && \
+    apt-get install gdebi-core libnss-mdns:i386 -q -y && \
+    gdebi -q --non-interactive crossover_16.2.5-1.deb && \
+    apt-get install -f -q -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -f crossover_16.2.5-1.deb && \
+    rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+
+RUN apt-get install -qy python-pip && pip install --upgrade pip && pip install python-uinput
+
+WORKDIR /home/virtue
+USER virtue
+RUN /opt/cxoffice/bin/cxbottle --create --description cmd --template win7 --bottle cmd
+ENV APP_TO_RUN "/opt/cxoffice/bin/cxstart --bottle cmd --display :0 --new-console cmd.exe"
