@@ -23,6 +23,9 @@ containers:
         ssh_port: 6768
         args:
             shm_size: 1g
+    terminal:
+        image_tag: virtue-terminal
+        ssh_port: 6766
     office-prep:
         image_tag: virtue-office-prep
         ssh_port: 6769
@@ -51,5 +54,7 @@ image_tags:
         base_image_tag: virtue-base
     virtue-firefox:
         base_image_tag: virtue-base
+    virtue-terminal:
+        base_image_tag: virute-base
     virtue-office-prep:
         base_image_tag: virtue-crossover
