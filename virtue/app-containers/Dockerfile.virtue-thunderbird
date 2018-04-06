@@ -1,0 +1,18 @@
+FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-base
+MAINTAINER Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+
+RUN apt-get update && \
+    apt-get -qy install thunderbird locales
+RUN locale-gen en_US.UTF-8 && \
+	update-locale LANG=en_US.UTF-8 && \
+	apt-get autoremove -y && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+
+ENV APP_TO_RUN thunderbird
+WORKDIR /home/virtue
+USER virtue

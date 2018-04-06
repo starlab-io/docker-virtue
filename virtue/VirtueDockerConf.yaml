@@ -1,5 +1,6 @@
 sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configures sshd properly! Goes as docker start -p argument
 
+
 ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
 repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
 
@@ -26,6 +27,9 @@ containers:
     terminal:
         image_tag: virtue-terminal
         ssh_port: 6766
+    thunderbird:
+        image_tag: virtue-thunderbird
+        ssh_port: 6765
     office-prep:
         image_tag: virtue-office-prep
         ssh_port: 6769
@@ -56,5 +60,7 @@ image_tags:
         base_image_tag: virtue-base
     virtue-terminal:
         base_image_tag: virute-base
+    virtue-thunderbird:
+        base_image_tag: virtue-base
     virtue-office-prep:
         base_image_tag: virtue-crossover
