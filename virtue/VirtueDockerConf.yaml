@@ -38,6 +38,9 @@ containers:
         ssh_port: 6769
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
+    skype:
+        image_tag: virtue-skype
+        ssh_port: 6763
     office:
         image_tag: virtue-office
         ssh_port: 6769
@@ -67,5 +70,7 @@ image_tags:
         base_image_tag: virtue-base
     virtue-chrome:
         base_image_tag: virtue-base
+    virtue-skype:
+        base_iamge_tag: virtue-base
     virtue-office-prep:
         base_image_tag: virtue-crossover
