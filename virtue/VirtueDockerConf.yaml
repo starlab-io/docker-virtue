@@ -34,8 +34,7 @@ containers:
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
-        seccomp: None
-
+        seccomp: None   # This actually means "run with Docker default seccomp policy"
 
 # Sample Image Entry:
 # images:
