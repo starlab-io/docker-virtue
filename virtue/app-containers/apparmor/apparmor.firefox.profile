@@ -3,7 +3,7 @@
 #include <tunables/global>
 
 
-profile docker-firefox flags=(attach_disconnected,mediate_deleted) {
+profile docker_firefox flags=(attach_disconnected,mediate_deleted) {
 
   #include <abstractions/base>
 
