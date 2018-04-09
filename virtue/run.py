@@ -3,7 +3,7 @@
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
 # Raytheon BBN Technologies
 
-import sys, docker, subprocess, argparse
+import sys, docker, subprocess, argparse, os
 from ContainerConfig import ContainerConfig
 
 
@@ -50,10 +50,17 @@ def start_container(conf, docker_client, args):
                 # the properly named profile
                 print("Ensuring that the AppArmor profile is enabled for %s" % (container))
 
+                cmd = []
+                if os.getuid() == 0:
+                    cmd.append('sudo')
+                cmd.extend(['apparmor_parser', '-r', '-W'])
+
                 if type(apparmor_file) is list:
                     for file_entry in apparmor_file:
                         # call the parser to load this profile
-                        subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', file_entry])                    
+                        wfilecmd = list(cmd)
+                        wfilecmd.append(file_entry)
+                        subprocess.check_call(wfilecmd)
                 else:
                     # The following `with` block opens apparmor file and looks for profile_name inside the file
                     # But for the cases of multiple apparmor files this logic is way more complicated. 
@@ -67,7 +74,9 @@ def start_container(conf, docker_client, args):
                                     print("WARNING: AppArmor profile name does not match '%s'. App armor will error!" % (profile_name))
                                 break
                     # call the parser to load this profile
-                    subprocess.check_call(['sudo', 'apparmor_parser', '-r', '-W', apparmor_file])
+                    wfilecmd = list(cmd)
+                    wfilecmd.append(apparmor_file)
+                    subprocess.check_call(wfilecmd)
                     
                 print("NOTE: Apparmor files are re-read only on container creation. If you change the file content, please remove the container and this this script again")
                 print("NOTE: Applying apparmor profile %s" % profile_name)
