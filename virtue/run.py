@@ -4,6 +4,7 @@
 # Raytheon BBN Technologies
 
 import sys, docker, subprocess, argparse, os
+from shutil import copyfile
 from ContainerConfig import ContainerConfig
 
 
@@ -61,6 +62,8 @@ def start_container(conf, docker_client, args):
                         wfilecmd = list(cmd)
                         wfilecmd.append(file_entry)
                         subprocess.check_call(wfilecmd)
+                        if args.restart:
+                            copyfile(file_entry, os.path.join('/etc/apparmor.d/', os.path.basename(file_entry)))
                 else:
                     # The following `with` block opens apparmor file and looks for profile_name inside the file
                     # But for the cases of multiple apparmor files this logic is way more complicated. 
@@ -77,6 +80,8 @@ def start_container(conf, docker_client, args):
                     wfilecmd = list(cmd)
                     wfilecmd.append(apparmor_file)
                     subprocess.check_call(wfilecmd)
+                    if args.restart:
+                        copyfile(apparmor_file, os.path.join('/etc/apparmor.d/', os.path.basename(apparmor_file)))
                     
                 print("NOTE: Apparmor files are re-read only on container creation. If you change the file content, please remove the container and this this script again")
                 print("NOTE: Applying apparmor profile %s" % profile_name)
