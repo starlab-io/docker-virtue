@@ -3,7 +3,7 @@
 #include <tunables/global>
 
 
-profile docker_gedit flags=(attach_disconnected,mediate_deleted) {
+profile docker_terminal flags=(attach_disconnected,mediate_deleted) {
 
   #include <abstractions/base>
 
@@ -38,7 +38,7 @@ profile docker_gedit flags=(attach_disconnected,mediate_deleted) {
   # ptrace (trace,read) peer=docker-default,
 
    /dev/tty* rw,
-   /usr/bin/gedit rix,
+   /usr/bin/xterm rix,
 
   # Allowing to change these doesn't seem to be a good idea
   # And denying it should be harmless
