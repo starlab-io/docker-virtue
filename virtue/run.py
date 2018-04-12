@@ -42,7 +42,7 @@ def start_container(conf, docker_client, args):
             
             security_opt = []
             if apparmor_file:
-                profile_name = 'docker_%s' % (container)
+                profile_name = 'docker_%s' % (container.replace('-', '_'))
                 # unlike seccomp, apparmor has a parser that needs to run aside from docker.
                 # the parser will take apparmor file with a profile definition and store it
                 # in its own database. Docker then just references it by profile name.
@@ -171,9 +171,9 @@ def save_container(conf, docker_client, args):
         print("ERROR! Container %s is not described in %s. Can't save a non-virtue container" % (container, conf._DEFAULT_CONFIG_FILE))
         return
     container_name = container
-    if output not in conf.get_tag_names():
-        print("ERROR! image tag %s is not described in %s. Please add its entry before saving." % (output, conf._DEFAULT_CONFIG_FILE))
-        return
+    #if output not in conf.get_tag_names():
+    #    print("ERROR! image tag %s is not described in %s. Please add its entry before saving." % (output, conf._DEFAULT_CONFIG_FILE))
+    #    return
     container_obj = None
     try:
         container_obj = docker_client.containers.get(container_name)

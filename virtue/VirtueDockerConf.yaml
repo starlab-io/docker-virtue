@@ -1,6 +1,7 @@
 sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configures sshd properly! Goes as docker start -p argument
 
 
+
 ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
 repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
 
@@ -47,9 +48,12 @@ containers:
     skype:
         image_tag: virtue-skype
         ssh_port: 6763
-    office:
-        image_tag: virtue-office
+    office-word:
+        image_tag: virtue-office-word
         ssh_port: 6769
+    office-outlook:
+        image_tag: virtue-office-outlook
+        ssh_port: 6771
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
@@ -71,13 +75,13 @@ image_tags:
     virtue-firefox:
         base_image_tag: virtue-base
     virtue-terminal:
-        base_image_tag: virute-base
+        base_image_tag: virtue-base
     virtue-thunderbird:
         base_image_tag: virtue-base
     virtue-chrome:
         base_image_tag: virtue-base
     virtue-skype:
-        base_iamge_tag: virtue-base
+        base_image_tag: virtue-base
     virtue-powershell:
         base_image_tag: virtue-base
     virtue-office-prep:
