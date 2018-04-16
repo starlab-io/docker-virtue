@@ -23,6 +23,9 @@ RUN wget -q https://media.codeweavers.com/pub/crossover/cxlinux/demo/crossover_1
 
 RUN apt-get install -qy python-pip && pip install --upgrade pip && pip install python-uinput
 
+COPY cxlicense.sig /opt/cxoffice/etc/license.sig
+COPY cxlicense.txt /opt/cxoffice/etc/license.txt
+
 WORKDIR /home/virtue
 USER virtue
 ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup
