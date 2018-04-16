@@ -3,7 +3,8 @@ sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configu
 
 
 ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
-repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
+#ssh_authorized_keys_file: /home/hexorg/Documents/Programs/virtue/.ssh/id_rsa.virtueGithub.pub
+repository: 370205851472.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue
 
 # Sample Container Entry:
 # containers:
@@ -57,10 +58,6 @@ containers:
         image_tag: virtue-office-outlook
         ssh_port: 6771
         seccomp: None   # This actually means "run with Docker default seccomp policy"
-    putty:
-        image_tag: virtue-putty
-        ssh_port: 6770
-        seccomp: None   # This actually means "run with Docker default seccomp policy"
 
 # Sample Image Entry:
 # images:
@@ -88,10 +85,6 @@ image_tags:
     virtue-powershell:
         base_image_tag: virtue-base
     virtue-office-prep:
-        base_image_tag: virtue-crossover
-    virtue-putty-prep:
-        base_image_tag: virtue-crossover
-    virtue-putty:
         base_image_tag: virtue-crossover
     virtue-wincmd:
         base_image_tag: virtue-crossover
