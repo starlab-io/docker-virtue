@@ -45,15 +45,18 @@ containers:
     wincmd:
         image_tag: virtue-wincmd
         ssh_port: 6762
+        seccomp: None   # This actually means "run with Docker default seccomp policy"
     skype:
         image_tag: virtue-skype
         ssh_port: 6763
     office-word:
         image_tag: virtue-office-word
         ssh_port: 6769
+        seccomp: None   # This actually means "run with Docker default seccomp policy"
     office-outlook:
         image_tag: virtue-office-outlook
         ssh_port: 6771
+        seccomp: None   # This actually means "run with Docker default seccomp policy"
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
