@@ -3,7 +3,7 @@ sshd_port: 2022/tcp # Same for all containers. Make sure your dockerfile configu
 
 
 ssh_authorized_keys_file: /home/virtue/.ssh/authorized_keys
-repository: 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue # what docker repository to use
+repository: 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue # what docker repository to use
 
 # Sample Container Entry:
 # containers:
