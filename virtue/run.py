@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
-# Raytheon BBN Technologies
+# Copyright 2018 Raytheon BBN Technologies Corp.
 
 import sys, docker, subprocess, argparse, os
 from shutil import copyfile

@@ -1,6 +1,8 @@
 docker-virtue
 =============
 
+Copyright 2017, 2018 Raytheon BBN Technologies Corp.
+
 The docker containers that include the virtue applications must be created in a very specific manner. In general,
 the containers host an `xpra` instance listening on port 2023 and an ssh daemon listening on port 2022. Additionally,
 the ssh daemon gets its authorized keys from an environment variable passed in on SSHPUBKEY into the container. The ssh
