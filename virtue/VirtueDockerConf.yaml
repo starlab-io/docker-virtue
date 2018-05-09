@@ -89,8 +89,6 @@ image_tags:
         base_image_tag: virtue-base
     virtue-office-prep:
         base_image_tag: virtue-crossover
-    virtue-putty-prep:
-        base_image_tag: virtue-crossover
     virtue-putty:
         base_image_tag: virtue-crossover
     virtue-wincmd:
