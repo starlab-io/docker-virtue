@@ -1,5 +1,7 @@
 # Syslog-ng setup
 
+Copyright 2017, 2017 Raytheon BBN Technologies Corp.
+
 ## Intall syslog-ng
 
 To install using apt, first add 
