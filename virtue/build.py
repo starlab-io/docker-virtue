@@ -41,6 +41,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Build Virtue Images')
     parser.add_argument('-l', '--list', required=False, help='List available images instead of building them', action='store_true')
     parser.add_argument('-p', '--push', required=False, help='Push the image to the repository after building it. Make sure docker is authorized ahead of time with `docker login`.', action='store_true')
+    parser.add_argument('-r', '--repo', required=False, help='Override repo in config file')
     parser.add_argument('image', nargs='?', default=None, help='Virtue Image to be built. Accepts only tags listed in %s. If unspecified, builds all of them.' % (conf._DEFAULT_CONFIG_FILE))
     args = parser.parse_args()
 
@@ -50,6 +51,11 @@ if __name__ == '__main__':
         print('\n'.join(conf.get_tag_names()))
     else:
         toBuild = []
+
+        print('REPO from config: ' + conf.get_repository())
+        if args.repo is not None:
+            print('args.repo       : ' + args.repo)
+            conf.override(conf._repository, args.repo)
         
         if args.image is None:
             toBuild.extend(conf.get_tag_names())
@@ -57,7 +63,7 @@ if __name__ == '__main__':
             toBuild.append(args.image)
 
         docker_client = docker.from_env()
-
+        
         images = {}
         for tag_name in toBuild:
             images[tag_name] = build_image(conf, docker_client, tag_name)

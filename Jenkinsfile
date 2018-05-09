@@ -28,7 +28,7 @@ echo "--------------- IMAGES ---------------"
 python3 build.py --list
 echo "--------------------------------------"
 
-python3 build.py 
+python3 build.py -p -r ajordan-desktop.bbn.com:5000/virtue
 
 echo "--------------- Cleaning Up ---------------"
 deactivate

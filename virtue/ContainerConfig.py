@@ -111,7 +111,10 @@ class ContainerConfig():
         ''' Save config to file '''
         with open(filename, 'w') as f:
             f.write(yaml.dump(self.data))
-    
+
+    def override(self, key, value):
+        self.data[key] = value
+            
     def get_repository(self):
         ''' Get default repository name'''
         return self.data[self._repository]
