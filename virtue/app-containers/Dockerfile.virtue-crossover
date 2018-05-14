@@ -26,6 +26,13 @@ RUN apt-get install -qy python-pip && pip install --upgrade pip && pip install p
 COPY cxlicense.sig /opt/cxoffice/etc/license.sig
 COPY cxlicense.txt /opt/cxoffice/etc/license.txt
 
+# Copy modified wineserver over original
+COPY install_overlay.py /opt/cxoffice/install_overlay.py
+COPY cxoffice-overlay.tgz /opt/cxoffice/cxoffice-overlay.tgz
+RUN cd /opt/cxoffice/ &&\
+    python install_overlay.py &&\
+    rm /opt/cxoffice/install_overlay.py /opt/cxoffice/cxoffice-overlay.tgz
+
 WORKDIR /home/virtue
 USER virtue
 ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup
