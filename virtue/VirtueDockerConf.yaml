@@ -39,6 +39,10 @@ containers:
         ssh_port: 6769
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
+        args:
+            volumes:
+             # Used to bring syslog messages from the container to the host's syslog-ng
+             - /dev/log:/dev/log
     powershell:
         image_tag: virtue-powershell
         ssh_port: 6761
@@ -46,6 +50,9 @@ containers:
         image_tag: virtue-wincmd
         ssh_port: 6762
         seccomp: None   # This actually means "run with Docker default seccomp policy"
+        args:
+            volumes:
+             - /dev/log:/dev/log
     skype:
         image_tag: virtue-skype
         ssh_port: 6763
@@ -53,14 +60,23 @@ containers:
         image_tag: virtue-office-word
         ssh_port: 6769
         seccomp: None   # This actually means "run with Docker default seccomp policy"
+        args:
+            volumes:
+             - /dev/log:/dev/log
     office-outlook:
         image_tag: virtue-office-outlook
         ssh_port: 6771
         seccomp: None   # This actually means "run with Docker default seccomp policy"
+        args:
+            volumes:
+             - /dev/log:/dev/log
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
         seccomp: None   # This actually means "run with Docker default seccomp policy"
+        args:
+            volumes:
+             - /dev/log:/dev/log
 
 # Sample Image Entry:
 # images:
