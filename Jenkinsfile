@@ -12,6 +12,20 @@ pipeline {
 	    steps {
 		git credentialsId: 'f59ff73f-97a3-4095-8804-a7c88134d824', url: 'git@github.com:starlab-io/docker-virtue.git'
 
+		step([  $class: 'CopyArtifact',
+			filter: 'cxoffice-overlay.tgz',
+			fingerprintArtifacts: true,
+			projectName: 'virtue-wine',
+			target: 'virtue/app-containers/'
+		])
+
+		step([  $class: 'CopyArtifact',
+			filter: 'install_overlay.py',
+			fingerprintArtifacts: true,
+			projectName: 'virtue-wine',
+			target: 'virtue/app-containers/'
+		])
+
 		sh '''#!/bin/bash
 
 cd virtue
@@ -35,7 +49,7 @@ deactivate
 rm -rf virtue-venv
 rm app-containers/cxlicense.sig
 rm app-containers/cxlicense.txt
-                '''
+		'''
 	    }
 	}
     }
