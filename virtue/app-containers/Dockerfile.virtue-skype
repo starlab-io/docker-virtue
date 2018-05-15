@@ -13,7 +13,8 @@ RUN apt-get update && \
 		libnss3 \
 		libsecret-1-0 \
 		libxss1 
-RUN wget https://go.skype.com/skypeforlinux-64.deb && \
+RUN apt install -qy gnome-keyring && \
+        wget https://go.skype.com/skypeforlinux-64.deb && \
 	dpkg -i skypeforlinux-64.deb && \
 	apt-get install -f
 RUN locale-gen en_US.UTF-8 && \
