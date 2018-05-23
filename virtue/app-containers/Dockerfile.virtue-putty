@@ -1,6 +1,6 @@
 # Crossover-docker for PuTTY
 
-FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-crossover
+FROM 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue:virtue-crossover
 MAINTAINER Alex Jordan <alex.jordan@raytheon.com>
 
 USER root
@@ -33,8 +33,5 @@ RUN mkdir -p /home/virtue/.cxoffice
 
 COPY PuTTY.cxarchive /home/virtue/.cxoffice/
 RUN cd /home/virtue/.cxoffice && tar -zxf PuTTY.cxarchive && rm PuTTY.cxarchive
-
-COPY cxlicense.sig /opt/cxoffice/etc/license.sig
-COPY cxlicense.txt /opt/cxoffice/etc/license.txt 
 
 ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup

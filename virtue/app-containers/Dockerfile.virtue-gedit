@@ -1,4 +1,4 @@
-FROM 602130734730.dkr.ecr.us-east-1.amazonaws.com/starlab-virtue:virtue-base
+FROM 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue:virtue-base
 MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER root
