@@ -3,7 +3,7 @@
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
 # Copyright 2018, Raytheon BBN Technologies Corp.
 
-import docker, sys, os, argparse
+import docker, sys, os, argparse, json
 from ContainerConfig import ContainerConfig
 
 
@@ -42,6 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--list', required=False, help='List available images instead of building them', action='store_true')
     parser.add_argument('-p', '--push', required=False, help='Push the image to the repository after building it. Make sure docker is authorized ahead of time with `docker login`.', action='store_true')
     parser.add_argument('-r', '--repo', required=False, help='Override repo in config file')
+    parser.add_argument('-o', '--imagefile', required=False, default=None, help='Write image URIs to file')
     parser.add_argument('image', nargs='?', default=None, help='Virtue Image to be built. Accepts only tags listed in %s. If unspecified, builds all of them.' % (conf._DEFAULT_CONFIG_FILE))
     args = parser.parse_args()
 
@@ -64,12 +65,27 @@ if __name__ == '__main__':
 
         docker_client = docker.from_env()
         
+            
         images = {}
+        image_uris = {}
         for tag_name in toBuild:
             images[tag_name] = build_image(conf, docker_client, tag_name)
+            if images[tag_name] is None:
+                image_uris[tag_name] = None
+            else:
+                image_uris[tag_name] = conf.get_repository() + ":" + tag_name
             if args.push:
+                if images[tag_name] is None:
+                    print("Skipping %s - build failed" % tag_name)
+                    continue
                 print("Pushing %s to repository ..." % (tag_name), end='', flush=True)
                 docker_client.images.push(conf.get_repository(), tag_name)
-                print("[OK]")
+                print("[OK]")                   
+        
+        if args.imagefile:
+            with open(args.imagefile, 'w') as outfile:
+                json.dump(image_uris, outfile, indent=4, sort_keys=True) 
 
         print("Finished.")
+
+        
