@@ -7,7 +7,7 @@ import docker, sys, os, argparse, json
 from ContainerConfig import ContainerConfig
 
 
-def build_image(conf, docker_client, tag_name, nocache=False):
+def build_image(conf, docker_client, tag_name, nocache=False, push_dep=False):
     ''' Only operates on image tags described in config yaml.
         If a specified image tag depends on another virtue image, builds that 
         image first. Then builds this image. '''
@@ -18,8 +18,12 @@ def build_image(conf, docker_client, tag_name, nocache=False):
     # Check if this image depends on other virtue-image
     base = conf.get_base_image(tag_name)
     if base is not None:
-        # if it does depend - build the dependency first
-        build_image(conf, docker_client, base, nocache)
+        # if it does depend - build the dependency first and push it (because the dependency is 
+        # 'repo:image', not just 'image')
+        if build_image(conf, docker_client, base, nocache) is not None and push_dep == True:
+            print("Pushing %s to repository ..." % (tag_name), end='', flush=True)
+            docker_client.images.push(conf.get_repository(), tag_name)
+            print("[OK]")
     path = conf.get_build_path(tag_name)
     dockerfile = conf.get_Dockerfile(tag_name)
     print("Building %s as %s ... " % (os.path.join(path, dockerfile), docker_image_name), end='', flush=True)
@@ -74,7 +78,7 @@ if __name__ == '__main__':
         images = {}
         image_uris = {}
         for tag_name in toBuild:
-            images[tag_name] = build_image(conf, docker_client, tag_name, args.nocache)
+            images[tag_name] = build_image(conf, docker_client, tag_name, args.nocache, args.push)
             if images[tag_name] is None:
                 image_uris[tag_name] = None
             else:
