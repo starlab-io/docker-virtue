@@ -22,7 +22,7 @@ def build_image(conf, docker_client, tag_name, nocache=False, push_dep=False):
         # 'repo:image', not just 'image')
         if build_image(conf, docker_client, base, nocache) is not None and push_dep == True:
             print("Pushing %s to repository ..." % (tag_name), end='', flush=True)
-            docker_client.images.push(conf.get_repository(), tag_name)
+            docker_client.images.push(conf.get_repository(), base)
             print("[OK]")
     path = conf.get_build_path(tag_name)
     dockerfile = conf.get_Dockerfile(tag_name)
