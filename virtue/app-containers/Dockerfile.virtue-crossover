@@ -14,11 +14,11 @@ RUN wget -q https://media.codeweavers.com/pub/crossover/cxlinux/demo/crossover_1
     dpkg --add-architecture i386 && \
     apt-get update -q -y && \
     apt-get install gdebi-core libnss-mdns:i386 -q -y && \
-    gdebi -q --non-interactive crossover_16.2.5-1.deb && \
+    gdebi -q --non-interactive crossover_17.5.1-1.deb && \
     apt-get install -f -q -y && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -f crossover_16.2.5-1.deb && \
+    rm -f crossover_17.5.1-1.deb && \
     rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 RUN apt-get install -qy python-pip && pip install --upgrade pip && pip install python-uinput
