@@ -10,7 +10,7 @@ USER root
 
 # Install Crossover
 # Official instructions for installing Crossover specify installing through gdebi
-RUN wget -q https://media.codeweavers.com/pub/crossover/cxlinux/demo/crossover_16.2.5-1.deb && \
+RUN wget -q https://media.codeweavers.com/pub/crossover/cxlinux/demo/crossover_17.5.1-1.deb && \
     dpkg --add-architecture i386 && \
     apt-get update -q -y && \
     apt-get install gdebi-core libnss-mdns:i386 -q -y && \

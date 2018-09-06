@@ -21,7 +21,7 @@ def build_image(conf, docker_client, tag_name, nocache=False, push_dep=False):
         # if it does depend - build the dependency first and push it (because the dependency is 
         # 'repo:image', not just 'image')
         if build_image(conf, docker_client, base, nocache) is not None and push_dep == True:
-            print("Pushing %s to repository ..." % (tag_name), end='', flush=True)
+            print("Pushing %s to repository ..." % (base), end='', flush=True)
             docker_client.images.push(conf.get_repository(), base)
             print("[OK]")
     path = conf.get_build_path(tag_name)
