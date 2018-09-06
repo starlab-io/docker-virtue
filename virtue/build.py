@@ -7,7 +7,7 @@ import docker, sys, os, argparse, json
 from ContainerConfig import ContainerConfig
 
 
-def build_image(conf, docker_client, tag_name):
+def build_image(conf, docker_client, tag_name, nocache=False):
     ''' Only operates on image tags described in config yaml.
         If a specified image tag depends on another virtue image, builds that 
         image first. Then builds this image. '''
@@ -19,16 +19,20 @@ def build_image(conf, docker_client, tag_name):
     base = conf.get_base_image(tag_name)
     if base is not None:
         # if it does depend - build the dependency first
-        build_image(conf, docker_client, base)
+        build_image(conf, docker_client, base, nocache)
     path = conf.get_build_path(tag_name)
     dockerfile = conf.get_Dockerfile(tag_name)
     print("Building %s as %s ... " % (os.path.join(path, dockerfile), docker_image_name), end='', flush=True)
     try:
-        img = docker_client.images.build(path=path, dockerfile=dockerfile, tag=docker_image_name)
+        img = docker_client.images.build(path=path, dockerfile=dockerfile, \
+            tag=docker_image_name, nocache=nocache)
     except docker.errors.BuildError as e:
         print("A build error has happened!")
         print(e)
-        cmd = 'docker build -t %s -f %s %s' % (docker_image_name, os.path.join(path, dockerfile), path)
+        cmd = 'docker build -t %s -f %s %s %s' % (docker_image_name, \
+            os.path.join(path, dockerfile), \
+            '--no-cache' if nocache else '', \
+            path)
         print("Likely, something is wrong with the Dockerfile. Please run\n\t%s\nFor a more verbose error" % (cmd))
         return None
         
@@ -43,6 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--push', required=False, help='Push the image to the repository after building it. Make sure docker is authorized ahead of time with `docker login`.', action='store_true')
     parser.add_argument('-r', '--repo', required=False, help='Override repo in config file')
     parser.add_argument('-o', '--imagefile', required=False, default=None, help='Write image URIs to file')
+    parser.add_argument('-n', '--nocache', required=False, help='Rebuild every layer of the container from scratch', action='store_true')
     parser.add_argument('image', nargs='?', default=None, help='Virtue Image to be built. Accepts only tags listed in %s. If unspecified, builds all of them.' % (conf._DEFAULT_CONFIG_FILE))
     args = parser.parse_args()
 
@@ -69,7 +74,7 @@ if __name__ == '__main__':
         images = {}
         image_uris = {}
         for tag_name in toBuild:
-            images[tag_name] = build_image(conf, docker_client, tag_name)
+            images[tag_name] = build_image(conf, docker_client, tag_name, args.nocache)
             if images[tag_name] is None:
                 image_uris[tag_name] = None
             else:
