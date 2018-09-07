@@ -1,6 +1,7 @@
 # Crossover-docker for PuTTY
 
-FROM 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue:virtue-crossover
+ARG REPO=703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue
+FROM $REPO:virtue-crossover
 MAINTAINER Alex Jordan <alex.jordan@raytheon.com>
 
 USER root

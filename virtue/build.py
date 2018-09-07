@@ -11,6 +11,7 @@ def build_image(conf, docker_client, tag_name, nocache=False, push_dep=False):
     ''' Only operates on image tags described in config yaml.
         If a specified image tag depends on another virtue image, builds that 
         image first. Then builds this image. '''
+
     if tag_name not in conf.get_tag_names():
         print("ERROR! image tag %s is not described in %s. Make sure you're trying to build a proper virtue image" % (tag_name, conf._DEFAULT_CONFIG_FILE))
         return
@@ -28,13 +29,18 @@ def build_image(conf, docker_client, tag_name, nocache=False, push_dep=False):
     dockerfile = conf.get_Dockerfile(tag_name)
     print("Building %s as %s ... " % (os.path.join(path, dockerfile), docker_image_name), end='', flush=True)
     try:
-        img = docker_client.images.build(path=path, dockerfile=dockerfile, \
-            tag=docker_image_name, nocache=nocache)
+        img = docker_client.images.build(path=path, \
+            dockerfile=dockerfile, \
+            tag=docker_image_name, \
+            buildargs={'REPO': conf.get_repository()}, \
+            nocache=nocache, \
+            rm=True)
     except docker.errors.BuildError as e:
         print("A build error has happened!")
         print(e)
-        cmd = 'docker build -t %s -f %s %s %s' % (docker_image_name, \
+        cmd = 'docker build -t %s -f %s --build-arg REPO=%s %s %s' % (docker_image_name, \
             os.path.join(path, dockerfile), \
+            conf.get_repository(),
             '--no-cache' if nocache else '', \
             path)
         print("Likely, something is wrong with the Dockerfile. Please run\n\t%s\nFor a more verbose error" % (cmd))
