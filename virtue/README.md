@@ -143,3 +143,50 @@ To create a new Virtue, run the following commands:
 - Build a new Dockerfile that installs the prereqs (listed under "Advanced" when you install the app in Crossover), copies in the cxarchive file, and then decompresses it. See `Dockerfile.virtue-putty` for an example.
 - Add your app to `Virtue.config`
 - Run `./virtue build Virtue.config`
+
+
+Updating Containers
+------------------------
+
+The easiest way to update the containers is to check in any changes to the galahad-wine and docker-virtue git repositories and run the Jenkins virtue-wine and docker-virtue jobs.
+
+Jenkins will generate all of the images except for virtue-office-word and virtue-office-outlook because Office must be installed manually.  It is preferable to create these two images on a local machine rather than an EC2 container.  To create them:
+
+- Log in to docker through AWS using `./get_docker_login_command.sh`
+- Pull the virtue-office-prep image built by CI: `docker pull 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue-ci:virtue-office-prep`
+- You will also need an ISO for Microsoft Office
+    - Mount the MS Office ISO (or otherwise extract it to a directory)
+    - In VirtueDockerConf.yaml, add a volume under office-prep that points to the mounted ISO location, for example the last line in:
+```
+    office-prep:
+        image_tag: virtue-office-prep
+        ssh_port: 6769
+        apparmor: None # This is an install container. Should be used only to install a given application
+        seccomp: None
+        args:
+            volumes:
+             # Used to bring syslog messages from the container to the host's syslog-ng
+             - /dev/log:/dev/log
+             - /home/mariaz/msoffice2013:/home/virtue/msoffice2013
+```
+- You may also need to change the ssh_authorized_keys_file in VirtueDockerConf.yaml to a path that exists for you
+- Start the container with: `./run.py start office-prep`
+- Connect to the container either directly using XPRA or through Canvas.  You will need an SSH tunnel if connecting directly to XPRA.
+- In a browser, go to `localhost:10000` (or whatever port you've forwarded to).  You will see the Crossover selection dialog.  It may be hidden in the bottom right corner.  Click "Install Windows Software" and select the directory where you've volumed in the ISO file.  Click through the rest of the installer.
+- Back in your terminal, run `./run.py save office-prep office-word` and `./run.py save office-prep office-outlook`
+- Tag the newly created images with the main repository:
+```
+docker tag <word image id> 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue:virtue-office-word
+docker tag <word image id> 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue:virtue-office-outlook
+```
+
+Now that these two images are done, pull the rest of the containers from the CI repo and retag them to the main repo:
+```
+python3 publish.py -l -e office-word -e office-outlook
+```
+
+And then push all of the containers to the main repo:
+```
+python3 publish.py -s
+```
+
