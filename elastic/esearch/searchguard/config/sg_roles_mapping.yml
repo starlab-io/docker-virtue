@@ -13,3 +13,15 @@ sg_kibana:
 sg_all_access:
   users:
     - admin
+
+sg_syslog_ng:
+  users:
+    - syslog-ng
+
+sg_excalibur:
+  users:
+    - excalibur
+
+sg_merlin:
+  users:
+    - merlin

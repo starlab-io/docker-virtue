@@ -6,6 +6,43 @@ sg_all_access:
       '*':
         - '*'
 
+sg_syslog_ng:
+  cluster:
+    - indices:admin/template/get
+    - indices:admin/template/put
+    - CLUSTER_MONITOR
+    - CLUSTER_COMPOSITE_OPS
+  indices:
+    'logstash-*':
+      '*':
+        - CRUD
+        - CREATE_INDEX
+
+sg_excalibur:
+  cluster:
+    - indices:admin/template/get
+    - indices:admin/template/put
+    - CLUSTER_MONITOR
+    - CLUSTER_COMPOSITE_OPS
+  indices:
+    'excalibur-*':
+      '*':
+        - CRUD
+        - CREATE_INDEX
+
+sg_merlin:
+  cluster:
+    - indices:admin/template/get
+    - indices:admin/template/put
+    - CLUSTER_MONITOR
+    - CLUSTER_COMPOSITE_OPS
+  indices:
+    'merlin-*':
+      '*':
+        - CRUD
+        - CREATE_INDEX
+
+
 sg_kibana:
   cluster:
     - CLUSTER_COMPOSITE_OPS_RO

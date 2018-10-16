@@ -10,3 +10,9 @@ kibanaserver:
 kibanaro:
   hash: $2a$12$JJSXNfTowz7Uu5ttXfeYpeYE0arACvcwlPBStB1F.MI7f0U9Z4DGC
   #password is: kibanaro
+syslog-ng:
+  hash: $2a$12$8FKL3.CiAZ2nnS2NP1hpo.ZB9UwjwOi.h3Oav71mFUMNBfIqztc/e
+excalibur:
+  hash: $2a$12$h3ufmqOblNHCSPwLQcP.ROLun8dJZ8TbRJ9mYHxWkPoAmy3jNu75m
+merlin:
+  hash: $2a$12$OMsuRXrWstrY..NNR8siGux1G1/JbNmbuIHx2gtU/axN9kZ/cYL56
