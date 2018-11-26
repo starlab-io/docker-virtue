@@ -11,8 +11,12 @@ cp ~/galahad-config/elasticsearch_keys/kibana.crt.pem ~/docker-virtue/elastic/ki
 cp ~/galahad-config/elasticsearch_keys/kibana.key.pem ~/docker-virtue/elastic/kibana/config/kibana.key.pem
 
 # Build and start docker stack
-sudo docker-compose build
-sudo docker-compose up &
+docker-compose build
+docker-compose up &
+
+# Let stack start up
+
+sleep 30
 
 # Run setup script
 docker-compose exec -T elasticsearch bin/init_sg.sh

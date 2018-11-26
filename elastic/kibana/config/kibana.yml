@@ -5,7 +5,7 @@
 server.name: kibana
 server.host: "0"
 
-elasticsearch.url: https://128.89.89.91:9200
+elasticsearch.url: https://aggregator.galahad.com:9200
 elasticsearch.username: "kibanaserver"
 elasticsearch.password: "kibanaserver"
 
@@ -19,6 +19,8 @@ elasticsearch.ssl.keyPassphrase: changeit
 elasticsearch.ssl.verificationMode: none
 
 searchguard.cookie.password: "123567818187654rwrwfsfshdhdhtegdhfzftdhncn"
+
+logging.verbose: true
     
 
 ## Disable X-Pack
