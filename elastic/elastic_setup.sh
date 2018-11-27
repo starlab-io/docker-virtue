@@ -10,6 +10,9 @@ cp ~/galahad-config/elasticsearch_keys/ca/signing-ca.pem ~/docker-virtue/elastic
 cp ~/galahad-config/elasticsearch_keys/kibana.crt.pem ~/docker-virtue/elastic/kibana/config/kibana.crt.pem
 cp ~/galahad-config/elasticsearch_keys/kibana.key.pem ~/docker-virtue/elastic/kibana/config/kibana.key.pem
 
+# Create data folder so that it keeps the correct permissions/user group
+mkdir ~/docker-virtue/elastic/esearch/data/ 
+
 # Build and start docker stack
 docker-compose build
 docker-compose up &
