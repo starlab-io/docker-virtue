@@ -18,7 +18,7 @@ chmod +x ~/docker-virtue/elastic/esearch/searchguard/bin/init_sg.sh
 
 # Build and start docker stack
 docker-compose build
-docker-compose up &
+docker-compose up -d
 
 # Let stack start up
 
