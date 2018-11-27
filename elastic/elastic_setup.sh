@@ -11,7 +11,10 @@ cp ~/galahad-config/elasticsearch_keys/kibana.crt.pem ~/docker-virtue/elastic/ki
 cp ~/galahad-config/elasticsearch_keys/kibana.key.pem ~/docker-virtue/elastic/kibana/config/kibana.key.pem
 
 # Create data folder so that it keeps the correct permissions/user group
-mkdir ~/docker-virtue/elastic/esearch/data/ 
+mkdir ~/docker-virtue/elastic/esearch/data/
+
+# Make searchguard init script executable
+chmod +x ~/docker-virtue/elastic/esearch/searchguard/bin/init_sg.sh 
 
 # Build and start docker stack
 docker-compose build
