@@ -1,0 +1,17 @@
+ARG REPO=703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue
+FROM $REPO:virtue-base
+MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER root
+USER root
+
+RUN apt-get update && \
+    apt-get -qy install <PUT_YOUR_PACKAGES_HERE> && \
+	apt-get autoremove -y && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+
+ENV APP_TO_RUN <COMMAND_TO_RUN>
+EXPOSE <PORT_YOU_SPECIFIED>
+WORKDIR /home/virtue
+USER virtue
