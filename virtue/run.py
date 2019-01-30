@@ -111,6 +111,7 @@ def start_container(conf, docker_client, args):
                 'environment': environment,
                 'security_opt': security_opt,
                 'name': container_name,
+                'cap_add': 'NET_ADMIN',
             }
 
             if args.restart:
