@@ -111,6 +111,7 @@ def start_container(conf, docker_client, args):
                 'environment': environment,
                 'security_opt': security_opt,
                 'name': container_name,
+                'shm_size' : '2G',
             }
 
             if args.restart:
