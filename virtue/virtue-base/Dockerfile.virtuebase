@@ -18,32 +18,35 @@ RUN apt-get update && \
 
 # Install Deps for xpra
 RUN apt-get update && \
-    apt-get -qy install liblz4-tool python-gtkglext1 dbus dbus-x11 python-pip && \
-        python3-cryptography python3-kerberos python3-gssapi python3-gst-1.0 && \
+    apt-get -qy install liblz4-tool python-gtkglext1 dbus dbus-x11 python-pip \
+        python3-cryptography python3-kerberos python3-gssapi python3-gst-1.0 \
         python3-cups python3-paramiko python3-xdg && \
-	apt-get autoremove -y && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 RUN pip install --upgrade pip
 RUN pip install numpy opencv-python websockify netifaces python-uinput
 
 # Install Beta Xpra/WinSwitch Repo
-RUN curl https://winswitch.org/gpg.asc | apt-key add -
-RUN echo "deb http://winswitch.org/beta/ xenial main" > /etc/apt/sources.list.d/winswitch.list;
-RUN echo "deb http://winswitch.org/ xenial main" >> /etc/apt/sources.list.d/winswitch.list;
-RUN apt-get install -y software-properties-common >& /dev/null;
-RUN add-apt-repository universe >& /dev/null;
-RUN apt-get update;
-RUN apt-get install xpra;
+RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
+    echo "deb http://winswitch.org/beta/ xenial main" > /etc/apt/sources.list.d/winswitch.list && \
+    echo "deb http://winswitch.org/ xenial main" >> /etc/apt/sources.list.d/winswitch.list && \
+    apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository universe && \
+    apt-get install -y xpra && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 # Install Xpra
 # Debug Tools
 # DebugExtras
 RUN apt-get update && \
     apt-get -qy install vim xvfb strace && \
-	apt-get autoremove -y && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 #Create virtue user for sshd,xpra, and target app
 RUN useradd -ms /usr/sbin/nologin virtue
