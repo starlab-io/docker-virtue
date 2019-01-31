@@ -1,7 +1,6 @@
 ARG REPO=703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue
 # REPO arg defined above to avoid warnings during building, but is unused because this is the base
 FROM ubuntu:16.04
-MAINTAINER Kyle Stapp <kyle.stapp@starlab.io>
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER root
 USER root
@@ -10,38 +9,38 @@ USER root
 RUN sed -e 's:deb h:deb [arch=amd64] h:' -e 's:deb-src h:deb-src [arch=amd64] h:' -i /etc/apt/sources.list && \
     find /etc/apt/sources.list.d/ -type f -exec sed -e 's:deb h:deb [arch=amd64] h:' -i {} \;
 
-# General Image Update
-RUN	apt-get -qy update && \
-	apt-get -qy install software-properties-common && \
-	add-apt-repository universe && \
-	apt-get autoremove -y && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
-
+# Install SSH Server and Curl
 RUN apt-get update && \
     apt-get -qy install openssh-server curl && \
 	apt-get autoremove -y && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
-# Install Xpra/WinSwitch Repo
-RUN curl https://winswitch.org/gpg.asc | apt-key add - && \
-	echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list
-
 # Install Deps for xpra
 RUN apt-get update && \
     apt-get -qy install liblz4-tool python-gtkglext1 dbus dbus-x11 python-pip && \
+        python3-cryptography python3-kerberos python3-gssapi python3-gst-1.0 && \
+        python3-cups python3-paramiko python3-xdg && \
 	apt-get autoremove -y && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 RUN pip install --upgrade pip
 RUN pip install numpy opencv-python websockify netifaces python-uinput
 
+# Install Beta Xpra/WinSwitch Repo
+RUN curl https://winswitch.org/gpg.asc | apt-key add -
+RUN echo "deb http://winswitch.org/beta/ xenial main" > /etc/apt/sources.list.d/winswitch.list;
+RUN echo "deb http://winswitch.org/ xenial main" >> /etc/apt/sources.list.d/winswitch.list;
+RUN apt-get install -y software-properties-common >& /dev/null;
+RUN add-apt-repository universe >& /dev/null;
+RUN apt-get update;
+RUN apt-get install xpra;
+
 # Install Xpra
 # Debug Tools
 # DebugExtras
 RUN apt-get update && \
-    apt-get -qy install xpra vim xvfb strace && \
+    apt-get -qy install vim xvfb strace && \
 	apt-get autoremove -y && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
@@ -63,6 +62,7 @@ RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
 #Configure ssh to allow key based auth and grab key from env
 COPY sshd_config /home/virtue/
 COPY *.sh /home/virtue/
+COPY *.conf /etc/xpra/conf.d/
 
 #TBD Restrict SSH to only run the one xpra command
 
