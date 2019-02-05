@@ -79,4 +79,4 @@ RUN chmod +x /home/virtue/kickoff_root.sh
 RUN chmod 777 /home/virtue/kickoff.sh
 
 #Auto start command
-ENTRYPOINT ["/home/virtue/root_kickoff.sh"]
+ENTRYPOINT ["/home/virtue/kickoff_root.sh"]
