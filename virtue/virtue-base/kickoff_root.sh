@@ -7,7 +7,7 @@
 
 # Loop through the networkRules file and add them to the
 # iptable rule chains
-cat /home/virtue/networkRules | while read line; do
+cat /etc/networkRules | while read line; do
 	iptables $line
 done
 
