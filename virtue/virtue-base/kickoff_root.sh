@@ -5,9 +5,9 @@
 # adding iptable rules.
 
 
-# Loop through the iptable.rules file and add them to the
+# Loop through the networkRules file and add them to the
 # iptable rule chains
-cat /etc/networkRules | while read line; do
+cat /home/virtue/networkRules | while read line; do
 	iptables $line
 done
 
