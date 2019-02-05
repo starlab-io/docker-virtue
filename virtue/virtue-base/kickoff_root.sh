@@ -4,6 +4,8 @@
 # root commands that must be ran during startup such as
 # adding iptable rules.
 
+# Allow enough time for the network rules to be copied over
+sleep 10
 
 # Loop through the networkRules file and add them to the
 # iptable rule chains
