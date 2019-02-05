@@ -17,4 +17,4 @@ done
 # Since the virtue user has a `nologin` shell, we cannot simply
 # `su` to virtue. Instead we execute the script on behalf of the
 # virtue user.
-su -s /bin/sh -c '/home/virtue/kickoff.sh' virtue
+runuser -u virtue -- /home/virtue/kickoff.sh
