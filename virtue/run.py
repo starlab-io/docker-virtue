@@ -3,7 +3,7 @@
 # Author: Stanislav Ponomarev <stanislav.ponomarev@raytheon.com>
 # Copyright 2018 Raytheon BBN Technologies Corp.
 
-import sys, docker, subprocess, argparse, os
+import sys, docker, subprocess, argparse, os, tarfile
 from shutil import copyfile
 from ContainerConfig import ContainerConfig
 
@@ -146,6 +146,18 @@ def start_container(conf, docker_client, args):
         try:
             print("Starting service %s ..." % (container), end='', flush=True)
             container_obj.start()
+            print("[OK]")
+            
+            # Copy network rules into the docker container
+            print("Copying network rules...", end='', flush=True)
+            tar = tarfile.open('networkRules.tar',mode='w')
+            try:
+                tar.add('/etc/networkRules',arcname='networkRules')
+            finally:
+                tar.close()
+            data = open('networkRules.tar','rb').read()
+            container_obj.put_archive('/etc/',data)
+            os.remove('./networkRules.tar')
             print("[OK]")
         except docker.errors.APIError as e:
             print(e)
