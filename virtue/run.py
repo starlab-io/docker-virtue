@@ -151,11 +151,9 @@ def start_container(conf, docker_client, args):
             
             # Copy network rules into the docker container
             print("Copying network rules...", end='', flush=True)
-            tar = tarfile.open('networkRules.tar',mode='w')
-            try:
+            with tarfile.open('networkRules.tar',mode='w') as tar:
                 tar.add('/etc/networkRules',arcname='networkRules')
-            finally:
-                tar.close()
+
             data = open('networkRules.tar','rb').read()
             container_obj.put_archive('/etc/',data)
             os.remove('./networkRules.tar')
