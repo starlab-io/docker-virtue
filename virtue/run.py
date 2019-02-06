@@ -112,6 +112,7 @@ def start_container(conf, docker_client, args):
                 'security_opt': security_opt,
                 'name': container_name,
                 'cap_add': 'NET_ADMIN',
+                'shm_size' : '2G',
             }
 
             if args.restart:
