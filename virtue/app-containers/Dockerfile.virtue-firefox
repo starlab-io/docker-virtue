@@ -13,5 +13,3 @@ RUN apt-get update && \
 
 ENV APP_TO_RUN firefox
 
-WORKDIR /home/virtue
-USER virtue

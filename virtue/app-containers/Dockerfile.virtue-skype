@@ -25,5 +25,3 @@ RUN locale-gen en_US.UTF-8 && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 ENV APP_TO_RUN skypeforlinux
-WORKDIR /home/virtue
-USER virtue

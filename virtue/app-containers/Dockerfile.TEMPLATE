@@ -13,5 +13,4 @@ RUN apt-get update && \
 
 ENV APP_TO_RUN <COMMAND_TO_RUN>
 EXPOSE <PORT_YOU_SPECIFIED>
-WORKDIR /home/virtue
-USER virtue
+

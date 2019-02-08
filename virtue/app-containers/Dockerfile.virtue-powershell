@@ -19,5 +19,3 @@ RUN	apt-get autoremove -y && \
 	rm -rf /var/lib/apt/lists* /tmp/* /var/tmp/*
 
 ENV APP_TO_RUN "xterm pwsh"
-WORKDIR /home/virtue
-USER virtue
