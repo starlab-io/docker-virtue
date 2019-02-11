@@ -30,5 +30,5 @@ RUN apt-get update -q -y && apt-get install \
 
 #ENV APP_TO_RUN /opt/cxoffice/bin/wine
 
-WORKDIR /home/virtue
-USER virtue
+#WORKDIR /home/virtue
+#USER virtue
