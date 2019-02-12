@@ -150,14 +150,18 @@ def start_container(conf, docker_client, args):
             print("[OK]")
             
             # Copy network rules into the docker container
-            print("Copying network rules...", end='', flush=True)
-            with tarfile.open('networkRules.tar',mode='w') as tar:
-                tar.add('/etc/networkRules',arcname='networkRules')
+            if os.path.isfile('/etc/networkRules'):
+                print("Copying network rules...", end='', flush=True)
+                with tarfile.open('networkRules.tar',mode='w') as tar:
+                    tar.add('/etc/networkRules',arcname='networkRules')
+                    
+                data = open('networkRules.tar','rb').read()
+                container_obj.put_archive('/etc/',data)
+                os.remove('./networkRules.tar')
+                print("[OK]")
+            else:
+                print("WARNING: file /etc/networkRules does not exist") 
 
-            data = open('networkRules.tar','rb').read()
-            container_obj.put_archive('/etc/',data)
-            os.remove('./networkRules.tar')
-            print("[OK]")
         except docker.errors.APIError as e:
             print(e)
 
