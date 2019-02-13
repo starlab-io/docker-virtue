@@ -79,8 +79,7 @@ def start_container(conf, docker_client, args):
                     wfilecmd = list(cmd)
                     wfilecmd.append(apparmor_file)
                     subprocess.check_call(wfilecmd)
-                    if args.restart:
-                        copyfile(apparmor_file, os.path.join('/etc/apparmor.d/', os.path.basename(apparmor_file)))
+                    copyfile(apparmor_file, os.path.join('/etc/apparmor.d/', os.path.basename(apparmor_file)))
                     
                 print("NOTE: Apparmor files are re-read only on container creation. If you change the file content, please remove the container and this this script again")
                 print("NOTE: Applying apparmor profile %s" % profile_name)
