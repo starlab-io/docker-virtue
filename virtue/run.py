@@ -62,8 +62,7 @@ def start_container(conf, docker_client, args):
                         wfilecmd = list(cmd)
                         wfilecmd.append(file_entry)
                         subprocess.check_call(wfilecmd)
-                        if args.restart:
-                            copyfile(file_entry, os.path.join('/etc/apparmor.d/', os.path.basename(file_entry)))
+                        copyfile(file_entry, os.path.join('/etc/apparmor.d/', os.path.basename(file_entry)))
                 else:
                     # The following `with` block opens apparmor file and looks for profile_name inside the file
                     # But for the cases of multiple apparmor files this logic is way more complicated. 
