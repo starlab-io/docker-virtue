@@ -41,7 +41,7 @@ containers:
         ssh_port: 6765
         args:
             volumes:
-                - /home/virtue/thunderbird:/docs
+                - /home/virtue/thunderbird:/home/virtue/docs
     chrome:
         image_tag: virtue-chrome
         ssh_port: 6764
