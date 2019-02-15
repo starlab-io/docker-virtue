@@ -70,16 +70,17 @@ RUN ssh-keygen -t dsa -f ~/.ssh/ssh_host_dsa_key && \
 #RUN sed -i "s/mesg n || true/test -t 0 \&\& mesg n/" /root/.profile
 
 #Configure ssh to allow key based auth and grab key from env
-COPY sshd_config /home/virtue/
-COPY *.sh /home/virtue/
+RUN mkdir /virtue
+COPY sshd_config virtue/
+COPY *.sh /virtue/
 COPY *.conf /etc/xpra/conf.d/
 
 #TBD Restrict SSH to only run the one xpra command
 
 
 USER root
-RUN chmod +x /home/virtue/kickoff_root.sh
-RUN chmod 777 /home/virtue/kickoff.sh
+RUN chmod +x /virtue/kickoff_root.sh
+RUN chmod 777 /virtue/kickoff.sh
 
 #Auto start command
-ENTRYPOINT ["/home/virtue/kickoff_root.sh"]
+ENTRYPOINT ["/virtue/kickoff_root.sh"]
