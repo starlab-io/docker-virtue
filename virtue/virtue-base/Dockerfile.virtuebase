@@ -65,7 +65,6 @@ COPY *.sh /virtue/
 COPY *.conf /etc/xpra/conf.d/
 
 #Create virtue user for sshd,xpra, and target app
-RUN mkdir /virtue
 RUN useradd -ms /usr/sbin/nologin virtue
 USER virtue
 WORKDIR /home/virtue
