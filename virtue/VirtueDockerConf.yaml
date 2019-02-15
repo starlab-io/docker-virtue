@@ -18,7 +18,7 @@ repository: 703915126451.dkr.ecr.us-east-2.amazonaws.com/starlab-virtue # what d
 
 containers:
     gedit:
-       image_tag: virtue-gedit
+        image_tag: virtue-gedit
         ssh_port: 6767
         args:
             volumes:
