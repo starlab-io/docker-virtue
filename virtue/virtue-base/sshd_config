@@ -62,6 +62,7 @@ PasswordAuthentication no
 #GSSAPICleanupCredentials yes
 
 X11Forwarding yes
+X11UseLocalhost no
 X11DisplayOffset 10
 PrintMotd no
 PrintLastLog yes
