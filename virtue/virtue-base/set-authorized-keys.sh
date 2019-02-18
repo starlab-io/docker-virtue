@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "$SSHPUBKEY" > /home/virtue/.ssh/authorized_keys
-chmod 600 /home/virtue/.ssh/authorized_keys
+echo "$SSHPUBKEY" > ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
