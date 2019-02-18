@@ -22,32 +22,37 @@ containers:
         ssh_port: 6767
         args:
             volumes:
-            - /home/virtue/gedit:/home/virtue/share
+            - /home/virtue/gedit/share:/home/virtue/share
+            - /home/virtue/gedit/thunderbird:/home/virtue/.thunderbird
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
         args:
             shm_size: 1g
             volumes:
-            - /home/virtue/firefox:/home/virtue/share
+            - /home/virtue/firefox/share:/home/virtue/share
+            - /home/virtue/firefox/thunderbird:/home/virtue/.thunderbird
     terminal:
         image_tag: virtue-terminal
         ssh_port: 6766
         args:
             volumes:
-            - /home/virtue/terminal:/home/virtue/share
+            - /home/virtue/terminal/share:/home/virtue/share
+            = /home/virtue/terminal/thunderbird:/home/virtue/.thunderbird
     thunderbird:
         image_tag: virtue-thunderbird
         ssh_port: 6765
         args:
             volumes:
-            - /home/virtue/thunderbird:/home/virtue/share
+            - /home/virtue/thunderbird/share:/home/virtue/share
+            - /home/virtue/thunderbird/thunderbird:/home/virtue/.thunderbird
     chrome:
         image_tag: virtue-chrome
         ssh_port: 6764
         args:
             volumes:
-            - /home/virtue/thunderbird:/home/virtue/share
+            - /home/virtue/chrome/share:/home/virtue/share
+            - /home/virtue/chrome/thunderbird:/home/virtue/.thunderbird
     office-prep:
         image_tag: virtue-office-prep
         ssh_port: 6769
@@ -57,7 +62,8 @@ containers:
             volumes:
             # Used to bring syslog messages from the container to the host's syslog-ng
             - /dev/log:/dev/log
-            - /home/virtue/office-prep:/home/virtue/share
+            - /home/virtue/office-prep/share:/home/virtue/share
+            - /home/virtue/office-prep/thunderbird:/home/virtue/.thunderbird
     powershell:
         image_tag: virtue-powershell
         ssh_port: 6761
@@ -65,7 +71,8 @@ containers:
         seccomp: None
         args:
             volumes:
-            - /home/virtue/powershell:/home/virtue/share
+            - /home/virtue/powershell/share:/home/virtue/share
+            - /home/virtue/powershell/thunderbird:/home/virtue/.thunderbird
     wincmd:
         image_tag: virtue-wincmd
         ssh_port: 6762
@@ -73,13 +80,15 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/wincmd:/home/virtue/share
+            - /home/virtue/wincmd/share:/home/virtue/share
+            - /home/virtue/wincmd/thunderbird:/home/virtue/.thunderbird
     skype:
         image_tag: virtue-skype
         ssh_port: 6763
         args:
             volumes:
-            - /home/virtue/skype:/home/virtue/share
+            - /home/virtue/skype/share:/home/virtue/share
+            - /home/virtue/skype/thunderbird:/home/virtue/.thunderbird
     office-word:
         image_tag: virtue-office-word
         ssh_port: 6769
@@ -87,7 +96,8 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/office-word:/home/virtue/share
+            - /home/virtue/office-word/share:/home/virtue/share
+            - /home/virtue/office-word/thunderbird:/home/virtue/.thunderbird
     office-outlook:
         image_tag: virtue-office-outlook
         ssh_port: 6771
@@ -95,7 +105,8 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/office-outlook:/home/virtue/share
+            - /home/virtue/office-outlook/share:/home/virtue/share
+            - /home/virtue/office-outlook/thunderbird:/home/virtue/.thunderbird
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
@@ -104,7 +115,8 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/putty:/home/virtue/share
+            - /home/virtue/putty/share:/home/virtue/share
+            - /home/virtue/putty/thunderbird:/home/virtue/.thunderbird
 
 # Sample Image Entry:
 # images:
