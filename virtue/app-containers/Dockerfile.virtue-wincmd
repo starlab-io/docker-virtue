@@ -5,4 +5,6 @@ MAINTAINER Stanislav Ponomarev
 WORKDIR /home/virtue
 USER virtue
 RUN /opt/cxoffice/bin/cxbottle --create --description cmd --template win7 --bottle cmd
+
+USER root
 ENV APP_TO_RUN "/opt/cxoffice/bin/cxstart --bottle cmd --display :0 --new-console cmd.exe"
