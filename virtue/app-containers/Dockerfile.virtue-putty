@@ -35,4 +35,5 @@ RUN mkdir -p /home/virtue/.cxoffice
 COPY PuTTY.cxarchive /home/virtue/.cxoffice/
 RUN cd /home/virtue/.cxoffice && tar -zxf PuTTY.cxarchive && rm PuTTY.cxarchive
 
+USER root
 ENV APP_TO_RUN /opt/cxoffice/bin/cxsetup

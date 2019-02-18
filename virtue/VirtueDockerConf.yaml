@@ -75,6 +75,7 @@ containers:
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
+        apparmor: None  # use the Docker default
         seccomp: None   # This actually means "run with Docker default seccomp policy"
         args:
             volumes:
