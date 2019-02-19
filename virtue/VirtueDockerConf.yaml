@@ -23,7 +23,7 @@ containers:
         args:
             volumes:
                 - type: bind
-                  propagation: rslave
+                      propagation: rslave
                   source: /home/virtue/gedit
                   target: /home/virtue/share
     firefox:
