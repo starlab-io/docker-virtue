@@ -22,11 +22,11 @@ containers:
         ssh_port: 6767
         args:
             volumes:
-                - type: bind
-                  bind:
-                      propagation: rslave
-                  source: /home/virtue/gedit
-                  target: /home/virtue/share
+                - host_path: /home/virtue/gedit
+                  container_path: /home/virtue/share
+                  options:
+                      - "rw"
+                      - "rslave"
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
