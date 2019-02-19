@@ -22,32 +22,32 @@ containers:
         ssh_port: 6767
         args:
             volumes:
-            - /home/virtue/gedit:/home/virtue/share,slave
+            - /home/virtue/gedit:/home/virtue/share:slave
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
         args:
             shm_size: 1g
             volumes:
-            - /home/virtue/firefox:/home/virtue/share,slave
+            - /home/virtue/firefox:/home/virtue/share:slave
     terminal:
         image_tag: virtue-terminal
         ssh_port: 6766
         args:
             volumes:
-            - /home/virtue/terminal:/home/virtue/share,slave
+            - /home/virtue/terminal:/home/virtue/share:slave
     thunderbird:
         image_tag: virtue-thunderbird
         ssh_port: 6765
         args:
             volumes:
-            - /home/virtue/thunderbird:/home/virtue/share,slave
+            - /home/virtue/thunderbird:/home/virtue/share:slave
     chrome:
         image_tag: virtue-chrome
         ssh_port: 6764
         args:
             volumes:
-            - /home/virtue/chrome:/home/virtue/share,slave
+            - /home/virtue/chrome:/home/virtue/share:slave
     office-prep:
         image_tag: virtue-office-prep
         ssh_port: 6769
@@ -57,7 +57,7 @@ containers:
             volumes:
             # Used to bring syslog messages from the container to the host's syslog-ng
             - /dev/log:/dev/log
-            - /home/virtue/office-prep:/home/virtue/share,slave
+            - /home/virtue/office-prep:/home/virtue/share:slave
     powershell:
         image_tag: virtue-powershell
         ssh_port: 6761
@@ -65,7 +65,7 @@ containers:
         seccomp: None
         args:
             volumes:
-            - /home/virtue/powershell:/home/virtue/share,slave
+            - /home/virtue/powershell:/home/virtue/share:slave
     wincmd:
         image_tag: virtue-wincmd
         ssh_port: 6762
@@ -73,13 +73,13 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/wincmd:/home/virtue/share,slave
+            - /home/virtue/wincmd:/home/virtue/share:slave
     skype:
         image_tag: virtue-skype
         ssh_port: 6763
         args:
             volumes:
-            - /home/virtue/skype:/home/virtue/share,slave
+            - /home/virtue/skype:/home/virtue/share:slave
     office-word:
         image_tag: virtue-office-word
         ssh_port: 6769
@@ -87,7 +87,7 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/office-word:/home/virtue/share,slave
+            - /home/virtue/office-word:/home/virtue/share:slave
     office-outlook:
         image_tag: virtue-office-outlook
         ssh_port: 6771
@@ -95,7 +95,7 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/office-outlook:/home/virtue/share,slave
+            - /home/virtue/office-outlook:/home/virtue/share:slave
     putty:
         image_tag: virtue-putty
         ssh_port: 6770
@@ -104,7 +104,7 @@ containers:
         args:
             volumes:
             - /dev/log:/dev/log
-            - /home/virtue/putty:/home/virtue/share,slave
+            - /home/virtue/putty:/home/virtue/share:slave
 
 # Sample Image Entry:
 # images:
