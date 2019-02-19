@@ -23,9 +23,9 @@ containers:
         args:
             volumes:
             - type: bind
-            - source: /home/virtue/gedit
-            - target: /home/virtue/share
-            - bind-propagation: rslave
+              source: /home/virtue/gedit
+              target: /home/virtue/share
+              bind-propagation: rslave
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
