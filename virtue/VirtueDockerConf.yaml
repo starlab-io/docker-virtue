@@ -23,6 +23,7 @@ containers:
         args:
             volumes:
                 - type: bind
+                  bind:
                       propagation: rslave
                   source: /home/virtue/gedit
                   target: /home/virtue/share
