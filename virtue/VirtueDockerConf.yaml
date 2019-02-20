@@ -22,10 +22,10 @@ containers:
         ssh_port: 6767
         args:
             volumes:
-                - host_path: /home/virtue/gedit
-                  container_path: /home/virtue/share
-                  options:
-                      - "rprivate"
+                - type: bind
+                  bind: rprivate
+                  source: /home/virtue/gedit
+                  target: /home/virtue/share
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
