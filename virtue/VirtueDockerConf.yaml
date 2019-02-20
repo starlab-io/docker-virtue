@@ -23,7 +23,8 @@ containers:
         args:
             - volumes:
                 - type: bind
-                  propagation: shared
+                  bind:
+                    propagation: shared
                   source: /home/virtue/gedit
                   target: /home/virtue/share
                   read_only: false
