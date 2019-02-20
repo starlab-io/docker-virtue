@@ -24,9 +24,9 @@ containers:
             - volumes:
                 - type: bind
                     propagation: shared
-                - source: /home/virtue/gedit
-                - target: /home/virtue/share
-                - read_only: false
+                  source: /home/virtue/gedit
+                  target: /home/virtue/share
+                  read_only: false
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
