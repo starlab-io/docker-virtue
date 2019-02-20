@@ -131,7 +131,7 @@ def start_container(conf, docker_client, args):
 
             try:
                 print("Creating docker container...", end='', flush=True)
-                print("docker_args = {}".format(docker_args))
+                print("docker_cmd={}".format(docker_cmd))
                 container_obj = docker_client.containers.create(**docker_args)
                 print("[OK]")
             except docker.errors.APIError as e:
