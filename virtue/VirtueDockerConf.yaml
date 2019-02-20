@@ -25,8 +25,7 @@ containers:
                 - host_path: /home/virtue/gedit
                   container_path: /home/virtue/share
                   options:
-                      - "rw"
-                      - "rslave"
+                      - "shared"
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
