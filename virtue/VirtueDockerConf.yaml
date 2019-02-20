@@ -21,12 +21,7 @@ containers:
         image_tag: virtue-gedit
         ssh_port: 6767
         args:
-            volumes:
-                - type: bind
-                  bind: rprivate
-                  source: /home/virtue/gedit
-                  target: /home/virtue/share
-    firefox:
+            --mount: type=bind,source=/home/virtue/gedit,target=/home/virtue/share,bind-propagation=rslave
         image_tag: virtue-firefox
         ssh_port: 6768
         args:
