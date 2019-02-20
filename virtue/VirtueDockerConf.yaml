@@ -22,12 +22,12 @@ containers:
         ssh_port: 6767
         args:
             volumes:
-            - type: bind
-              bind:
-                propagation: shared
-              source: /home/virtue/gedit
-              target: /home/virtue/share
-              read_only: false
+              - type: bind
+                bind:
+                  propagation: shared
+                source: /home/virtue/gedit
+                target: /home/virtue/share
+                read_only: false
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
