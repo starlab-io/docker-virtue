@@ -47,7 +47,7 @@ containers:
         ssh_port: 6764
         args:
             volumes:
-            - /home/virtue/thunderbird:/home/virtue/share
+            - /home/virtue/chrome:/home/virtue/share
     office-prep:
         image_tag: virtue-office-prep
         ssh_port: 6769
@@ -105,6 +105,14 @@ containers:
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/putty:/home/virtue/share
+    ms-office:
+        image_tag: ms-office
+        ssh_port: 6772
+        seccomp: None
+        args:
+            volumes:
+            - /dev/log:/dev/log
+            - /home/virtue/ms-office:/home/virtue/ms-office
 
 # Sample Image Entry:
 # images:
