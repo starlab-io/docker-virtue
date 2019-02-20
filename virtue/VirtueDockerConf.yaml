@@ -105,8 +105,8 @@ containers:
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/putty:/home/virtue/share
-    ms-office:
-        image_tag: ms-office
+    msoffice:
+        image_tag: msoffice
         ssh_port: 6772
         seccomp: None
         args:
