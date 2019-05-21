@@ -21,12 +21,14 @@ containers:
         image_tag: virtue-gedit
         ssh_port: 6767
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/gedit:/home/virtue/share
     firefox:
         image_tag: virtue-firefox
         ssh_port: 6768
         args:
+            cap_add: SYS_PTRACE
             shm_size: 1g
             volumes:
             - /home/virtue/firefox:/home/virtue/share
@@ -34,18 +36,21 @@ containers:
         image_tag: virtue-terminal
         ssh_port: 6766
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/terminal:/home/virtue/share
     thunderbird:
         image_tag: virtue-thunderbird
         ssh_port: 6765
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/thunderbird:/home/virtue/share
     chrome:
         image_tag: virtue-chrome
         ssh_port: 6764
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/thunderbird:/home/virtue/share
     office-prep:
@@ -54,6 +59,7 @@ containers:
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
         args:
+            cap_add: SYS_PTRACE
             volumes:
             # Used to bring syslog messages from the container to the host's syslog-ng
             - /dev/log:/dev/log
@@ -64,6 +70,7 @@ containers:
         apparmor: None # This is an install container. Should be used only to install a given application
         seccomp: None
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/powershell:/home/virtue/share
     wincmd:
@@ -71,6 +78,7 @@ containers:
         ssh_port: 6762
         seccomp: None   # This actually means "run with Docker default seccomp policy"
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/wincmd:/home/virtue/share
@@ -78,6 +86,7 @@ containers:
         image_tag: virtue-skype
         ssh_port: 6763
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /home/virtue/skype:/home/virtue/share
     office-word:
@@ -85,6 +94,7 @@ containers:
         ssh_port: 6769
         seccomp: None   # This actually means "run with Docker default seccomp policy"
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/office-word:/home/virtue/share
@@ -93,6 +103,7 @@ containers:
         ssh_port: 6771
         seccomp: None   # This actually means "run with Docker default seccomp policy"
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/office-outlook:/home/virtue/share
@@ -102,6 +113,7 @@ containers:
         apparmor: None  # use the Docker default
         seccomp: None   # This actually means "run with Docker default seccomp policy"
         args:
+            cap_add: SYS_PTRACE
             volumes:
             - /dev/log:/dev/log
             - /home/virtue/putty:/home/virtue/share
