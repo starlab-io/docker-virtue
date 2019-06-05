@@ -20,6 +20,8 @@ profile kickoff flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/nameservice>
   #include <abstractions/python>
 
+  ptrace trace peer=*,
+
   /bin/bash rmix,
   /home/virtue/kickoff.sh r,
   /home/virtue/set-authorized-keys.sh rmix,

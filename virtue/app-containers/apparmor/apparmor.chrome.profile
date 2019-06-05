@@ -13,6 +13,8 @@ profile docker_chrome flags=(attach_disconnected,mediate_deleted) {
   file,
   umount,
 
+  ptrace trace peer=*,
+
   deny @{PROC}/* w,   # deny write for all files directly in /proc (not in a subdir)
   # deny write to files not in /proc/<number>/** or /proc/sys/**
   deny @{PROC}/{[^1-9],[^1-9][^0-9],[^1-9s][^0-9y][^0-9s],[^1-9][^0-9][^0-9][^0-9]*}/** w,
