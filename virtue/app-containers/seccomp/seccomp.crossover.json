@@ -150,6 +150,7 @@
             "inotify_init1",
             "inotify_rm_watch",
             "ioctl",
+            "ioprio_get",
             "ipc",
             "kill",
             "lchown",
