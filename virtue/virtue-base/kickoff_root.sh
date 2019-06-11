@@ -13,6 +13,7 @@ cat /etc/networkRules | while read line; do
 	iptables $line
 done
 
+python2 /opt/appsensor/appsensor.py &
 
 # Since the virtue user has a `nologin` shell, we cannot simply
 # `su` to virtue. Instead we execute the script on behalf of the

@@ -141,6 +141,7 @@
             "gettimeofday",
             "getuid",
             "ioctl",
+            "ioprio_get",
             "ipc",
             "kill",
             "lchown",
